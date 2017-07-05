@@ -203,8 +203,14 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         }
         
         if (err == noErr) {
-            const int v = params->fps;
-            CFBooleanRef ref = kCFBooleanTrue;
+            CFBooleanRef ref = kCFBooleanFalse;
+            err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_AllowTemporalCompression, ref);
+            CFRelease(ref);
+        }
+        
+        if (err == noErr) {
+            CFBooleanRef ref = kCFBooleanFalse;
+            // FixMe: kVTCompressionPropertyKey_BaseLayerFrameRate need a CFNumberRef
             err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_BaseLayerFrameRate, ref);
             CFRelease(ref);
         }
