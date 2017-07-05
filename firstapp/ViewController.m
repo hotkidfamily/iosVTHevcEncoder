@@ -183,8 +183,8 @@
         self.recordingLabel.hidden = NO;
     }else{
         [self.encoder destory];
-        [self.streamOutput destoryFileManager];
         self.encoder = nil;
+        [self.streamOutput destoryFileManager];
         [self destoryTimer];
         self.recordingLabel.hidden = YES;
         [self.encodeButton setTitle:@"编码" forState:UIControlStateNormal];

@@ -36,8 +36,12 @@
 void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStatus status, VTEncodeInfoFlags infoFlags,
                      CMSampleBufferRef sampleBuffer )
 {
-    NSLog(@"didCompressH265 called with status %d infoFlags %d", (int)status, (int)infoFlags);
-    if (status != 0) return;
+    
+    if (status != noErr){
+        NSLog(@"didCompressH265 called with status %d infoFlags %d", (int)status, (int)infoFlags);
+        return;
+    }
+    
     OSStatus statusCode = noErr;
     
     if (!CMSampleBufferDataIsReady(sampleBuffer))
@@ -47,8 +51,17 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     }
     vthevcencoder* encoder = (__bridge vthevcencoder*)outputCallbackRefCon;
     
-    CMTime presentTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-    int64_t ptsInMs = presentTime.value * 1000 / presentTime.timescale;
+    CMTime presentTimestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+    CMTime decodeTimestamp = CMSampleBufferGetDecodeTimeStamp(sampleBuffer);
+    int64_t dtsInMs = 0,  ptsInMs = 0;
+    if (presentTimestamp.flags & kCMTimeFlags_Valid) {
+        ptsInMs = presentTimestamp.value * 1000 / presentTimestamp.timescale;
+    }
+    if (decodeTimestamp.flags & kCMTimeFlags_Valid) {
+        dtsInMs = decodeTimestamp.value * 1000 / decodeTimestamp.timescale;
+    }
+    NSLog(@"pts %lld dts %lld", ptsInMs, dtsInMs);
+    
     if (encoder->startPTSInMS == 0){
         encoder->startPTSInMS = ptsInMs;
     }
@@ -72,23 +85,22 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         
         statusCode = CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(format, 0, &vps, &vpsSize, &vpsCount, 0 );
         
-        if (statusCode == noErr){
+        if (statusCode == noErr) {
             statusCode = CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(format, 1, &sps, &spsSize, &spsCount, 0 );
         }
         
-        if (statusCode == noErr){
+        if (statusCode == noErr) {
             statusCode = CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(format, 2, &pps, &ppsSize, &ppsCount, 0 );
         }
         
-        if (statusCode == noErr){
+        if (statusCode == noErr) {
             encoder.vps = [NSData dataWithBytes:vps length:vpsSize];
             encoder.sps = [NSData dataWithBytes:sps length:spsSize];
             encoder.pps = [NSData dataWithBytes:pps length:ppsSize];
         }
         
         if (encoder.delegate
-            && statusCode == noErr)
-        {
+            && statusCode == noErr) {
             [encoder.delegate gotExtraData:encoder.vps sps:encoder.sps pps:encoder.pps];
         }
     }
@@ -111,7 +123,7 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
             
             NSData* data = [[NSData alloc] initWithBytes:(dataPointer + bufferOffset + AVCCHeaderLength) length:NALUnitLength];
             
-            if(encoder.delegate)
+            if (encoder.delegate)
                 [encoder.delegate gotEncodedData:data isKeyFrame:keyframe];
             
             // Move to the next NAL unit in the block buffer
@@ -133,7 +145,7 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         
         err = VTCopySupportedPropertyDictionaryForEncoder(1280, 720, kCMVideoCodecType_HEVC, specification, &encoderID, &properties);
         
-        if (err == noErr){
+        if (err == noErr) {
             NSLog(@"get encodr %@ specification.", encoderID);
             CFRelease(encoderID);
             CFRelease(properties);
@@ -161,44 +173,52 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         err = VTCompressionSessionCreate(NULL, params.width, params.height, kCMVideoCodecType_HEVC, nil, NULL, NULL,
                                                   didCompressH265, (__bridge void *)(self),
                                                   &hevcsession);
-        if (err != noErr)
-        {
-            NSLog(@"H264: Unable to create a H264 hevcsession");
-        }
-        
-        if(err == noErr) {
-            const int32_t v = params.keyInterval;
+        if (err != noErr) {
             
-            CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
-            err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_MaxKeyFrameInterval, ref);
-            CFRelease(ref);
-        }
-        
-        if(err == noErr) {
-            const int v = params.fps;
-            CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
-            err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_ExpectedFrameRate, ref);
+            if (err == kVTCouldNotFindVideoEncoderErr) {
+                NSLog(@"No hevc encoder found in this device.");
+            }
             
-            CFRelease(ref);
+            NSLog(@"hevc: Unable to create a hevc hevcsession");
         }
         
-        if(err == noErr) {
-            const int v = params.fps;
-            CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
-            err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_BaseLayerFrameRate, ref);
-            CFRelease(ref);
-        }
-        
+        /**
+         * default is true close it.
+         */
         if (err == noErr) {
             CFBooleanRef ref = kCFBooleanFalse;
             err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_AllowTemporalCompression, ref);
             CFRelease(ref);
         }
         
+        if(err == noErr) {
+            const int32_t v = params.keyInterval;
+            CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
+            err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_MaxKeyFrameInterval, ref);
+            CFRelease(ref);
+        }
+        
+        /** enable b frames
+         */
         if (err == noErr) {
-            CFBooleanRef ref = kCFBooleanFalse;
-            // FixMe: kVTCompressionPropertyKey_BaseLayerFrameRate need a CFNumberRef
+            CFBooleanRef ref = kCFBooleanTrue;
+            err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_AllowFrameReordering, ref);
+            CFRelease(ref);
+        }
+        
+        // hevc hierarchical encoding
+        // all base and expect frame rate need to be setting.
+        if(err == noErr) {
+            const int32_t v = params.fps / 3;
+            CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
             err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_BaseLayerFrameRate, ref);
+            CFRelease(ref);
+        }
+        
+        if(err == noErr) {
+            const int32_t v = params.fps;
+            CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
+            err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_ExpectedFrameRate, ref);
             CFRelease(ref);
         }
         
@@ -208,9 +228,9 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
             err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_AverageBitRate, ref);
             CFRelease(ref);
         }
-        
+        #if 0
         if(err == noErr) {
-            int v = params.bitrate / 8;
+            int v = params.bitrate >> 3;
             CFNumberRef bytes = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &v);
             v = 1;
             CFNumberRef duration = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &v);
@@ -225,14 +245,17 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
             CFRelease(duration);
             CFRelease(limit);
         }
-        
+        #endif
         if(err == noErr) {
-            err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
+            CFBooleanRef ref = kCFBooleanTrue;
+            err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_RealTime, ref);
+            CFRelease(ref);
         }
         
         if(err == noErr) {
-            CFStringRef profileLevel = kVTProfileLevel_HEVC_Main_AutoLevel;
-            err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_ProfileLevel, profileLevel);
+            CFStringRef ref = kVTProfileLevel_HEVC_Main_AutoLevel;
+            err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_ProfileLevel, ref);
+            CFRelease(ref);
         }
         
         if(err == noErr) {
@@ -261,7 +284,7 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     CGSize bufferSize = CVImageBufferGetEncodedSize(imageBuffer);
     CGSize dispalySize = CVImageBufferGetDisplaySize(imageBuffer);
     
-    NSLog(@"frame size %.2fx%.2f - buffer %.2fx%.2f", dispalySize.width, dispalySize.height, bufferSize.width, bufferSize.height);
+    //NSLog(@"frame size %.2fx%.2f - buffer %.2fx%.2f", dispalySize.width, dispalySize.height, bufferSize.width, bufferSize.height);
     
     CVPixelBufferLockBaseAddress(imageBuffer, 0);
     
@@ -281,7 +304,7 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         }
     }
     
-    NSLog(@"pixel buffer %ldx%ld, stride %ld, pixel %x", width, height, bytesPerRow, (unsigned int)pixelType);
+    //NSLog(@"pixel buffer %ldx%ld, stride %ld, pixel %x", width, height, bytesPerRow, (unsigned int)pixelType);
     
     CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
     
@@ -295,6 +318,7 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
 
 -(BOOL)destory {
     if(hevcsession) {
+        VTCompressionSessionCompleteFrames(hevcsession, kCMTimeInvalid);
         VTCompressionSessionInvalidate(hevcsession);
         CFRelease(hevcsession);
         hevcsession = nil;
