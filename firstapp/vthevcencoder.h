@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "encoder.h"
 
-@interface vthevcencoder : encoder {
+@interface VTHevcEncoder : Encoder {
     VTCompressionSessionRef hevcsession;
     int64_t startPTSInMS;
 }

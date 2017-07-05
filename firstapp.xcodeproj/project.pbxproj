@@ -17,6 +17,7 @@
 		0953CC3F1E372ABE00294EF9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0953CC3D1E372ABE00294EF9 /* LaunchScreen.storyboard */; };
 		098ED8FF1F0A27E7008736D6 /* encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 098ED8FC1F0A27E7008736D6 /* encoder.m */; };
 		098ED9001F0A27E7008736D6 /* vt264encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 098ED8FE1F0A27E7008736D6 /* vt264encoder.m */; };
+		09F82CFF1F0D013B00BE52A4 /* capture.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F82CFE1F0D013B00BE52A4 /* capture.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,8 @@
 		098ED8FC1F0A27E7008736D6 /* encoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = encoder.m; sourceTree = "<group>"; };
 		098ED8FD1F0A27E7008736D6 /* vt264encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vt264encoder.h; sourceTree = "<group>"; };
 		098ED8FE1F0A27E7008736D6 /* vt264encoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = vt264encoder.m; sourceTree = "<group>"; };
+		09F82CFD1F0D013B00BE52A4 /* capture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = capture.h; sourceTree = "<group>"; };
+		09F82CFE1F0D013B00BE52A4 /* capture.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = capture.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +90,8 @@
 				0953CC2F1E372ABE00294EF9 /* Supporting Files */,
 				0912DF451F0A851C0036D178 /* outputStream.h */,
 				0912DF461F0A851C0036D178 /* outputStream.m */,
+				09F82CFD1F0D013B00BE52A4 /* capture.h */,
+				09F82CFE1F0D013B00BE52A4 /* capture.m */,
 			);
 			path = firstapp;
 			sourceTree = "<group>";
@@ -171,6 +176,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				09F82CFF1F0D013B00BE52A4 /* capture.m in Sources */,
 				0912DF471F0A851C0036D178 /* outputStream.m in Sources */,
 				098ED8FF1F0A27E7008736D6 /* encoder.m in Sources */,
 				0953CC371E372ABE00294EF9 /* ViewController.m in Sources */,

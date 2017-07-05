@@ -10,7 +10,7 @@
 
 const Byte startCode[4] = { 0x00, 0x00, 0x00, 0x01 };
 
-@implementation outputStream 
+@implementation OutputStream
 
 - (void)initFileManager {
     NSFileManager *fileManager = [NSFileManager defaultManager];

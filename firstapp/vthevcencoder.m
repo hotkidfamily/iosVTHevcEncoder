@@ -8,7 +8,7 @@
 
 #import "vthevcencoder.h"
 
-@implementation vthevcencoder
+@implementation VTHevcEncoder
 
 - (id)init {
     
@@ -49,7 +49,7 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         NSLog(@"didCompressH265 data is not ready ");
         return;
     }
-    vthevcencoder* encoder = (__bridge vthevcencoder*)outputCallbackRefCon;
+    VTHevcEncoder* encoder = (__bridge VTHevcEncoder*)outputCallbackRefCon;
     
     CMTime presentTimestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
     CMTime decodeTimestamp = CMSampleBufferGetDecodeTimeStamp(sampleBuffer);

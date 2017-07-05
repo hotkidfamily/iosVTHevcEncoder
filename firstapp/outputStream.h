@@ -10,7 +10,7 @@
 #import "encoder.h"
 
 
-@interface outputStream : NSObject <EncoderDataDelegate>
+@interface OutputStream : NSObject <EncoderDataDelegate>
 
 @property(nonatomic) NSFileHandle *fileHandle;
 

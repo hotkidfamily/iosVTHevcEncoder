@@ -8,7 +8,7 @@
 
 #import "vt264encoder.h"
 
-@implementation vt264encoder
+@implementation VT264Encoder
 
 - (id)init {
     
@@ -41,7 +41,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         NSLog(@"didCompressH264 data is not ready ");
         return;
     }
-    vt264encoder* encoder = (__bridge vt264encoder*)outputCallbackRefCon;
+    VT264Encoder* encoder = (__bridge VT264Encoder*)outputCallbackRefCon;
     
     // Check if we have got a key frame first
     bool keyframe = !CFDictionaryContainsKey( (CFArrayGetValueAtIndex(CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true), 0)), kCMSampleAttachmentKey_NotSync);

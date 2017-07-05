@@ -10,7 +10,7 @@
 #import "encoder.h"
 
 
-@interface vt264encoder : encoder {
+@interface VT264Encoder : Encoder {
     VTCompressionSessionRef session;
     int64_t startPTSInMS;
 }

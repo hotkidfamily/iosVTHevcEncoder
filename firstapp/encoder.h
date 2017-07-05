@@ -52,7 +52,7 @@ typedef struct tagEncodeStat {
 @end
 
 
-@interface encoder : NSObject {
+@interface Encoder : NSObject {
 @public
     DWEncodeStat stats;
 @protected
@@ -71,6 +71,5 @@ typedef struct tagEncodeStat {
 -(BOOL)flush;
 -(BOOL)destory;
 -(NSString *)description;
--(void)setPacketBufferDelegate:(id<EncoderDataDelegate>)packetBufferDelegate;
 
 @end

@@ -8,7 +8,7 @@
 
 #import "encoder.h"
 
-@implementation encoder
+@implementation Encoder
 
 - (id)init {
     
@@ -57,9 +57,5 @@
     return [NSString stringWithFormat:@"%@ - %@ - %@", @(self.standard), @(self.index), self.name];
 }
 
--(void)setPacketBufferDelegate:(id<EncoderDataDelegate>)packetBufferDelegate
-{
-    self.delegate = packetBufferDelegate;
-}
 
 @end
