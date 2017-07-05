@@ -316,7 +316,7 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     return YES;
 }
 
--(BOOL)destory {
+-(BOOL)destroy {
     if(hevcsession) {
         VTCompressionSessionCompleteFrames(hevcsession, kCMTimeInvalid);
         VTCompressionSessionInvalidate(hevcsession);

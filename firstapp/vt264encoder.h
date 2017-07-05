@@ -20,9 +20,4 @@
 @property(nonatomic) NSData *sps;
 @property(nonatomic) NSData *pps;
 
--(BOOL)reset:(DWEncodeParam *)params;
--(BOOL)encode:(CMSampleBufferRef)buffer;
--(BOOL)flush;
--(BOOL)destory;
-
 @end

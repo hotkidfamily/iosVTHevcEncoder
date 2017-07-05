@@ -49,7 +49,7 @@
     return YES;
 }
 
--(BOOL)destory {
+-(BOOL)destroy {
     return YES;
 }
 

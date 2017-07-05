@@ -242,7 +242,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     return TRUE;
 }
 
--(BOOL)destory {
+-(BOOL)destroy {
     
     if(session) {
         VTCompressionSessionInvalidate(session);

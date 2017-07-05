@@ -89,11 +89,13 @@
         
         [self.encoder reset:&params];
         self.encoder.delegate = self.streamOutput;
+        self.capture.delegate = self;
         [self initTimer];
         [self.encodeButton setTitle:@"停止" forState:UIControlStateNormal];
         self.recordingLabel.hidden = NO;
     }else{
-        [self.encoder destory];
+        self.capture.delegate = nil;
+        [self.encoder destroy];
         self.encoder = nil;
         [self.streamOutput destoryFileManager];
         [self destoryTimer];

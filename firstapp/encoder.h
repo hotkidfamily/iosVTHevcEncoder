@@ -69,7 +69,7 @@ typedef struct tagEncodeStat {
 -(BOOL)reset:(DWEncodeParam *)params;
 -(BOOL)encode:(CMSampleBufferRef)buffer;
 -(BOOL)flush;
--(BOOL)destory;
+-(BOOL)destroy;
 -(NSString *)description;
 
 @end
