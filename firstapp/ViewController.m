@@ -204,7 +204,7 @@
 - (void)flushRecordingLabel {
     uint32_t duration = 0;
     if (self.encoder){
-        duration = self.encoder.stats.workingDuration;
+        duration = self.encoder->stats.workingDuration;
     }
     NSString *label = [[NSString alloc] initWithFormat:@"Recording... %d", duration];
     self.recordingLabel.text = label;

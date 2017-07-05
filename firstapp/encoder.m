@@ -3,7 +3,7 @@
 //  appTest
 //
 //  Created by yanli on 2017/7/3.
-//  Copyright © 2017年 test. All rights reserved.
+//  Copyright © 2017年 YY inc. All rights reserved.
 //
 
 #import "encoder.h"
@@ -29,7 +29,6 @@
     for(CFIndex i = 0; i< size; i++){
         CFDictionaryRef encoder = CFArrayGetValueAtIndex(encoders, i);
         CFStringRef name = CFDictionaryGetValue(encoder, kVTVideoEncoderList_CodecName);
-        //NSLog(@"encoder %ld - %@", i, name);
         NSString *encoderDesc = [[NSString alloc] initWithFormat:@"%ld - %@\n", i, name];
         [encoderNames appendString:encoderDesc];
     }

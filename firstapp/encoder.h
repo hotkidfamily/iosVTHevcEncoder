@@ -3,7 +3,7 @@
 //  appTest
 //
 //  Created by yanli on 2017/7/3.
-//  Copyright © 2017年 test. All rights reserved.
+//  Copyright © 2017年 YY inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -52,15 +52,16 @@ typedef struct tagEncodeStat {
 @end
 
 
-@interface encoder : NSObject
+@interface encoder : NSObject {
+@public
+    DWEncodeStat stats;
+    DWEncodeParam params;
+}
 
 @property(nonatomic) NSString *name;
 @property(nonatomic) DWVideoStandard standard;
 @property(nonatomic) DWCodecIndex index;
 @property(weak, nonatomic) id<EncoderDataDelegate> delegate;
-@property(nonatomic, assign) DWEncodeStat stats;
-@property(nonatomic, assign) DWEncodeParam params;
-
 
 + (NSString *)listEncoders;
 

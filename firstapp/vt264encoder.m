@@ -15,15 +15,14 @@
     if (self = [super init]) {
         self.initialized = NO;
         self.sessionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        DWEncodeStat stat = self.stats;
-        stat.frameCount = 0;
-        stat.workingDuration = 0;
-        self.stats = stat;
         self.sps = nil;
         self.pps = nil;
         self.name = @"Apple VideoToolbox 264";
         self.standard = DWVideoStandardH264;
         self.index = DWCodecIndexVT264;
+        
+        stats.frameCount = 0;
+        stats.workingDuration = 0;
         startPTSInMS = 0;
         session = nil;
     }
@@ -107,16 +106,16 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     
 }
 
--(BOOL)reset:(DWEncodeParam *)params {
+-(BOOL)reset:(DWEncodeParam *)inParams {
     
-    self.params = *params;
+    params = *inParams;
     
     dispatch_async(self.sessionQueue, ^{
         
         // For testing out the logic, lets read from a file and then send it to encoder to create h264 stream
         
         // Create the compression session
-        OSStatus err = VTCompressionSessionCreate(NULL, self.params.width, self.params.height, kCMVideoCodecType_H264, NULL, NULL, NULL,
+        OSStatus err = VTCompressionSessionCreate(NULL, params.width, params.height, kCMVideoCodecType_H264, NULL, NULL, NULL,
                                                      didCompressH264, (__bridge void *)(self),
                                                      &session);
         
@@ -126,7 +125,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         }
         
         if(err == noErr) {
-            const int32_t v = params->keyInterval;
+            const int32_t v = params.keyInterval;
             
             CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
             err = VTSessionSetProperty(session, kVTCompressionPropertyKey_MaxKeyFrameInterval, ref);
@@ -134,7 +133,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         }
         
         if(err == noErr) {
-            const int v = params->fps;
+            const int v = params.fps;
             CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
             err = VTSessionSetProperty(session, kVTCompressionPropertyKey_ExpectedFrameRate, ref);
             CFRelease(ref);
@@ -146,14 +145,14 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         }
         
         if(err == noErr) {
-            const int v = params->maxBitrate;
+            const int v = params.maxBitrate;
             CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
             err = VTSessionSetProperty(session, kVTCompressionPropertyKey_AverageBitRate, ref);
             CFRelease(ref);
         }
         
         if(err == noErr) {
-            int v = params->bitrate / 8;
+            int v = params.bitrate / 8;
             CFNumberRef bytes = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &v);
             v = 1;
             CFNumberRef duration = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &v);
@@ -208,9 +207,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         startPTSInMS = ptsInMs;
     }
     else {
-        DWEncodeStat stats = self.stats;
         stats.workingDuration = (uint32_t)((ptsInMs - startPTSInMS)/1000);
-        self.stats = stats;
     }
     
     CGSize bufferSize = CVImageBufferGetEncodedSize(imageBuffer);
@@ -255,7 +252,10 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     
     self.initialized = NO;
     self.delegate = nil;
+    stats.frameCount = 0;
+    stats.workingDuration = 0;
     startPTSInMS = 0;
+    
     return TRUE;
 }
 
