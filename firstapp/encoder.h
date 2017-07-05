@@ -55,6 +55,7 @@ typedef struct tagEncodeStat {
 @interface encoder : NSObject {
 @public
     DWEncodeStat stats;
+@protected
     DWEncodeParam params;
 }
 
