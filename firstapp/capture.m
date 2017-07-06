@@ -8,19 +8,34 @@
 
 #import "capture.h"
 
+static void * SessionRunningContext = &SessionRunningContext;
+static void * FocusModeContext = &FocusModeContext;
+
 @implementation VideoCapture
+
 
 - (id)init
 {
-    [self initCamera];
+    cfgInternal.res.width = 1280;
+    cfgInternal.res.height = 720;
+    cfgInternal.fps = 25.0;
+    cfgInternal.pixelFormat = 0;
+    cfgInternal.switchCamera = FALSE;
+    
+    [self reconfig:cfgInternal];
     return self;
 }
 
-- (BOOL)initCamera {
-    setupRes = 1;
+
+- (BOOL)reconfig:(CAPTURECFG)cfg;
+{
+    if (!self.session) {
+        self.session = [[AVCaptureSession alloc] init];
+    }
     
-    self.session = [[AVCaptureSession alloc] init];
-    self.sessionQueue = dispatch_queue_create( "session queue", DISPATCH_QUEUE_SERIAL );
+    if (!self.sessionQueue) {
+        self.sessionQueue = dispatch_queue_create( "session queue", DISPATCH_QUEUE_SERIAL );
+    }
     
     switch ( [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] )
     {
@@ -43,31 +58,49 @@
             break;
     }
     
-    dispatch_async(self.sessionQueue, ^{
-        if(setupRes)
-        {
-            return;
+    dispatch_async( self.sessionQueue, ^{
+        AVCaptureDevicePosition preferredPosition = AVCaptureDevicePositionUnspecified;
+        
+        if (!self.device) {
+            preferredPosition = AVCaptureDevicePositionBack;
+        }
+        else if (cfg.switchCamera){
+            switch ( self.device.position )
+            {
+                case AVCaptureDevicePositionUnspecified:
+                case AVCaptureDevicePositionFront:
+                    preferredPosition = AVCaptureDevicePositionBack;
+                    break;
+                case AVCaptureDevicePositionBack:
+                    preferredPosition = AVCaptureDevicePositionFront;
+                    break;
+            }
+        }
+        else {
+            preferredPosition = AVCaptureDevicePositionBack;
         }
         
-        if( [self.session canSetSessionPreset:AVCaptureSessionPreset1280x720]){
-            self.session.sessionPreset = AVCaptureSessionPreset1280x720;
-        }
-        
-        AVCaptureDevice *videoDevice;
+        AVCaptureDevice *newVideoDevice;
         NSArray *types = [NSArray arrayWithObjects:AVCaptureDeviceTypeBuiltInWideAngleCamera, nil];
-        AVCaptureDeviceDiscoverySession *discovery = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:types mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
+        AVCaptureDeviceDiscoverySession *discovery = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:types mediaType:AVMediaTypeVideo position:preferredPosition];
         
         for (AVCaptureDevice *device in discovery.devices){
-            videoDevice = device;
+            newVideoDevice = device;
         }
         
-        [self.session beginConfiguration];
-        AVCaptureDeviceInput *videoInput = [[AVCaptureDeviceInput alloc] initWithDevice:videoDevice error:nil];
+        AVCaptureDeviceInput *newVideoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:newVideoDevice error:nil];
         
-        if( [self.session canAddInput:videoInput]){
-            [self.session addInput:videoInput];
-            self.input = videoInput;
-            self.device = videoDevice;
+        [self.session beginConfiguration];
+        
+        // Remove the existing device input first, since using the front and back camera simultaneously is not supported.
+        [self.session removeInput:self.input];
+        if ( [self.session canAddInput:newVideoDeviceInput] ) {
+            [self.session addInput:newVideoDeviceInput];
+            self.input = newVideoDeviceInput;
+            self.device = newVideoDevice;
+        }
+        else {
+            [self.session addInput:self.input];
         }
         
         AVCaptureVideoDataOutput *videoOutput = [[AVCaptureVideoDataOutput alloc] init];
@@ -85,12 +118,11 @@
             self.output = videoOutput;
         }
         
-        CMTime frameDuration = CMTimeMake(1, 25);
+        CMTime frameDuration = CMTimeMake(1, (uint32_t)cfg.fps);
         [self.device setActiveVideoMaxFrameDuration:frameDuration];
         
         [self.session commitConfiguration];
-        
-    });
+    } );
     
     return YES;
 }
@@ -102,6 +134,7 @@
     if(self.session) {
         if(![self.session isRunning])
             [self.session startRunning];
+            [self addObservers];
         
         ret = [self.session isRunning];
     }
@@ -115,6 +148,7 @@
     
     if(self.session) {
         [self.session stopRunning];
+        [self removeObservers];
         ret = [self.session isRunning];
     }
     else {
@@ -124,7 +158,7 @@
     return ret;
 }
 
-- (void)destory
+- (void)destroy
 {
     NSLog(@"Capture: %lu total frames %lu drop frames", stat.statDropFramesCount + stat.statCaptureFramesCount, stat.statDropFramesCount);
 }
@@ -138,6 +172,48 @@
         return NO;
     }
 }
+
+- (void)addObservers
+{
+    [self addObserver:self forKeyPath:@"session.running" options: (NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:SessionRunningContext];
+    [self addObserver:self forKeyPath:@"device.focusMode" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:FocusModeContext];
+}
+- (void)removeObservers
+{
+    [self removeObserver:self forKeyPath:@"session.running" context:SessionRunningContext];
+    [self removeObserver:self forKeyPath:@"device.focusMode" context:FocusModeContext];
+}
+
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+{
+    id oldValue = change[NSKeyValueChangeOldKey];
+    id newValue = change[NSKeyValueChangeNewKey];
+    
+    if ( context == FocusModeContext ) {
+        if ( newValue && newValue != [NSNull null] ) {
+            AVCaptureFocusMode newMode = [newValue intValue];
+            if ( oldValue && oldValue != [NSNull null] ) {
+                NSLog( @"focus mode (0:lock 1:auto 2:continue auto): %d -> %ld", [oldValue intValue], (long)newMode );
+            }
+            else {
+                NSLog( @"focus mode (0:lock 1:auto 2:continue auto): %ld", (long)newMode);
+            }
+        }
+    }
+    else if ( context == SessionRunningContext ) {
+        BOOL isRunning = NO;
+        if ( newValue && newValue != [NSNull null] ) {
+            isRunning = [newValue boolValue];
+        }
+        
+        NSLog( @"session %@ running", isRunning?@"start":@"stop" );
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {
     stat.statCaptureFramesCount ++;

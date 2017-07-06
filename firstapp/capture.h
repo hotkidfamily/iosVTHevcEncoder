@@ -9,6 +9,13 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
+typedef struct tagCaptureParams {
+    CGSize res;
+    float fps;
+    uint32_t pixelFormat;
+    BOOL switchCamera;
+}CAPTURECFG;
+
 typedef struct tagCaptureStat {
     NSUInteger statCaptureFramesCount;
     NSUInteger statDropFramesCount;
@@ -23,6 +30,7 @@ typedef struct tagCaptureStat {
 @interface VideoCapture : NSObject {
     NSUInteger setupRes;
     CAPTURESTAT stat;
+    CAPTURECFG cfgInternal;
 }
 
 @property(nonatomic) AVCaptureDevice *device;
@@ -33,9 +41,10 @@ typedef struct tagCaptureStat {
 @property(weak, nonatomic) id<CaptureDelegate> delegate;
 
 - (id)init;
+- (BOOL)reconfig:(CAPTURECFG)cfg;
 - (BOOL)start;
 - (BOOL)stop;
-- (void)destory;
+- (void)destroy;
 - (BOOL)isRunning;
 
 @end

@@ -60,6 +60,7 @@
 - (IBAction)pressOpenButton:(id)sender {
     if ([self.capture isRunning]){
         [self.capture stop];
+        [self.capture destroy];
         self.capture.delegate = nil;
         [self.openButton setTitle:@"打开" forState:UIControlStateNormal];
     }
@@ -71,6 +72,12 @@
 }
 
 - (IBAction)pressSwitchButton:(id)sender {
+    if (self.capture) {
+        CAPTURECFG cfg;
+        cfg.fps = 25.0;
+        cfg.switchCamera = YES;
+        [self.capture reconfig:cfg];
+    }
 }
 
 - (IBAction)pressEncodeButton:(id)sender {
