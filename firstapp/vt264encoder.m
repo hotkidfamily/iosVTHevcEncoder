@@ -49,30 +49,23 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     if (keyframe)
     {
         CMFormatDescriptionRef format = CMSampleBufferGetFormatDescription(sampleBuffer);
-        // CFDictionaryRef extensionDict = CMFormatDescriptionGetExtensions(format);
-        // Get the extensions
-        // From the extensions get the dictionary with key "SampleDescriptionExtensionAtoms"
-        // From the dict, get the value for the key "avcC"
         
-        size_t sparameterSetSize, sparameterSetCount;
-        const uint8_t *sparameterSet;
-        OSStatus statusCode = CMVideoFormatDescriptionGetH264ParameterSetAtIndex(format, 0, &sparameterSet, &sparameterSetSize, &sparameterSetCount, 0 );
-        if (statusCode == noErr)
-        {
-            // Found sps and now check for pps
-            size_t pparameterSetSize, pparameterSetCount;
-            const uint8_t *pparameterSet;
-            OSStatus statusCode = CMVideoFormatDescriptionGetH264ParameterSetAtIndex(format, 1, &pparameterSet, &pparameterSetSize, &pparameterSetCount, 0 );
-            if (statusCode == noErr)
-            {
-                // Found pps
-                encoder.sps = [NSData dataWithBytes:sparameterSet length:sparameterSetSize];
-                encoder.pps = [NSData dataWithBytes:pparameterSet length:pparameterSetSize];
-                if (encoder.delegate)
-                {
-                    [encoder.delegate gotExtraData:nil sps:encoder.sps pps:encoder.pps];
-                }
-            }
+        const uint8_t *sps = nil, *pps = nil;
+        size_t spsSize = 0, ppsSize = 0, exCount = 0;
+        
+        OSStatus statusCode = CMVideoFormatDescriptionGetH264ParameterSetAtIndex(format, 0, &sps, &spsSize, &exCount, 0 );
+        if (statusCode == noErr) {
+            statusCode = CMVideoFormatDescriptionGetH264ParameterSetAtIndex(format, 1, &pps, &ppsSize, &exCount, 0 );
+        }
+        
+        if (statusCode == noErr) {
+            // Found pps
+            encoder.sps = [NSData dataWithBytes:sps length:spsSize];
+            encoder.pps = [NSData dataWithBytes:pps length:ppsSize];
+        }
+        
+        if (encoder.delegate) {
+            [encoder.delegate gotExtraData:nil sps:encoder.sps pps:encoder.pps];
         }
     }
     
@@ -100,10 +93,8 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
             
             // Move to the next NAL unit in the block buffer
             bufferOffset += AVCCHeaderLength + NALUnitLength;
-        }
-        
+        }   
     }
-    
 }
 
 -(BOOL)reset:(DWEncodeParam *)inParams {
