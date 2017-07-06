@@ -48,7 +48,7 @@
 
 -(NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ - %@ - %@", @(self.standard), @(self.index), self.name];
+    return [NSString stringWithFormat:@"%@ - %@ -%@ - %@", @(self.standard), @(self.index), @(self.type), self.name];
 }
 
 @end

@@ -12,6 +12,7 @@
 		093861621F0E7D1A008B0578 /* decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 093861611F0E7D1A008B0578 /* decoder.m */; };
 		093861651F0E7D2E008B0578 /* vt264decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 093861641F0E7D2E008B0578 /* vt264decoder.m */; };
 		093861681F0E7D3B008B0578 /* vthevcdecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 093861671F0E7D3B008B0578 /* vthevcdecoder.m */; };
+		0938616C1F0E83C4008B0578 /* fileparser.m in Sources */ = {isa = PBXBuildFile; fileRef = 0938616B1F0E83C4008B0578 /* fileparser.m */; };
 		0953CC311E372ABE00294EF9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0953CC301E372ABE00294EF9 /* main.m */; };
 		0953CC341E372ABE00294EF9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0953CC331E372ABE00294EF9 /* AppDelegate.m */; };
 		0953CC371E372ABE00294EF9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0953CC361E372ABE00294EF9 /* ViewController.m */; };
@@ -35,6 +36,8 @@
 		093861661F0E7D3B008B0578 /* vthevcdecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vthevcdecoder.h; sourceTree = "<group>"; };
 		093861671F0E7D3B008B0578 /* vthevcdecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = vthevcdecoder.m; sourceTree = "<group>"; };
 		093861691F0E7E8D008B0578 /* video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video.h; sourceTree = "<group>"; };
+		0938616A1F0E83C4008B0578 /* fileparser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fileparser.h; sourceTree = "<group>"; };
+		0938616B1F0E83C4008B0578 /* fileparser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = fileparser.m; sourceTree = "<group>"; };
 		0953CC2C1E372ABE00294EF9 /* firstapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = firstapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0953CC301E372ABE00294EF9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		0953CC321E372ABE00294EF9 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -107,6 +110,8 @@
 				093861611F0E7D1A008B0578 /* decoder.m */,
 				093861631F0E7D2E008B0578 /* vt264decoder.h */,
 				093861641F0E7D2E008B0578 /* vt264decoder.m */,
+				0938616A1F0E83C4008B0578 /* fileparser.h */,
+				0938616B1F0E83C4008B0578 /* fileparser.m */,
 				093861661F0E7D3B008B0578 /* vthevcdecoder.h */,
 				093861671F0E7D3B008B0578 /* vthevcdecoder.m */,
 			);
@@ -201,6 +206,7 @@
 				0953CC341E372ABE00294EF9 /* AppDelegate.m in Sources */,
 				098ED9001F0A27E7008736D6 /* vt264encoder.m in Sources */,
 				093861621F0E7D1A008B0578 /* decoder.m in Sources */,
+				0938616C1F0E83C4008B0578 /* fileparser.m in Sources */,
 				093861681F0E7D3B008B0578 /* vthevcdecoder.m in Sources */,
 				0953CC311E372ABE00294EF9 /* main.m in Sources */,
 				093861651F0E7D2E008B0578 /* vt264decoder.m in Sources */,
