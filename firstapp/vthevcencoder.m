@@ -8,6 +8,19 @@
 
 #import "vthevcencoder.h"
 
+@interface VTHevcEncoder () {
+    VTCompressionSessionRef hevcsession;
+    int64_t startPTSInMS;
+}
+
+@property(nonatomic) dispatch_queue_t sessionQueue;
+@property(nonatomic) BOOL initialized;
+@property(nonatomic) NSData *vps;
+@property(nonatomic) NSData *sps;
+@property(nonatomic) NSData *pps;
+
+@end
+
 @implementation VTHevcEncoder
 
 - (id)init {

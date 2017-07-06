@@ -10,14 +10,7 @@
 #import "encoder.h"
 
 
-@interface VT264Encoder : Encoder {
-    VTCompressionSessionRef session;
-    int64_t startPTSInMS;
-}
+@interface VT264Encoder : Encoder
 
-@property(nonatomic) dispatch_queue_t sessionQueue;
-@property(nonatomic) BOOL initialized;
-@property(nonatomic) NSData *sps;
-@property(nonatomic) NSData *pps;
 
 @end

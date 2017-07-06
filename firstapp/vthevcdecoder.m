@@ -8,6 +8,12 @@
 
 #import "vthevcdecoder.h"
 
+@interface vthevcdecoder () {
+    VTDecompressionSessionRef session;
+}
+
+@end
+
 @implementation vthevcdecoder
 
 - (id)init {

@@ -8,6 +8,11 @@
 
 #import "vt264decoder.h"
 
+@interface vt264decoder () {
+    VTDecompressionSessionRef session;
+}
+@end
+
 @implementation vt264decoder
 
 - (id)init {
