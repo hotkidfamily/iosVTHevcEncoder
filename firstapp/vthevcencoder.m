@@ -209,7 +209,7 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         // hevc hierarchical encoding
         // all base and expect frame rate need to be setting.
         if(err == noErr) {
-            const int32_t v = params.fps / 3;
+            const int32_t v = (params.fps + 4) / 5;
             CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
             err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_BaseLayerFrameRate, ref);
             CFRelease(ref);
@@ -223,9 +223,16 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         }
         
         if(err == noErr) {
-            const int v = params.maxBitrate;
+            const int v = params.bitrate;
             CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
             err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_AverageBitRate, ref);
+            CFRelease(ref);
+        }
+        
+        if (err == noErr) {
+            const float v = 0.5;
+            CFNumberRef ref = CFNumberCreate(NULL, kCFNumberFloatType, &v);
+            err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_Quality, ref);
             CFRelease(ref);
         }
         #if 0
