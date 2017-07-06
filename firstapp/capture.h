@@ -9,6 +9,11 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
+typedef struct tagCaptureStat {
+    NSUInteger statCaptureFramesCount;
+    NSUInteger statDropFramesCount;
+}CAPTURESTAT;
+
 @protocol CaptureDelegate <NSObject>
 
 - (void)gotSampleBuffer:(CMSampleBufferRef)buffer;
@@ -17,8 +22,7 @@
 
 @interface VideoCapture : NSObject {
     NSUInteger setupRes;
-    NSUInteger statCaptureFramesCount;
-    NSUInteger statDropFramesCount;
+    CAPTURESTAT stat;
 }
 
 @property(nonatomic) AVCaptureDevice *device;

@@ -126,7 +126,7 @@
 
 - (void)destory
 {
-    
+    NSLog(@"Capture: %lu total frames %lu drop frames", stat.statDropFramesCount + stat.statCaptureFramesCount, stat.statDropFramesCount);
 }
 
 - (BOOL)isRunning
@@ -140,14 +140,14 @@
 }
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {
-    statCaptureFramesCount ++;
+    stat.statCaptureFramesCount ++;
     if (self.delegate) {
         [self.delegate gotSampleBuffer:sampleBuffer];
     }
 }
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didDropSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {
-    statDropFramesCount ++;
+    stat.statDropFramesCount ++;
 }
 
 

@@ -280,18 +280,17 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     
     CMTime presentTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
     CMTime durationTime = kCMTimeInvalid; //CMSampleBufferGetDuration(sampleBuffer);
-    
+#if 0
     CGSize bufferSize = CVImageBufferGetEncodedSize(imageBuffer);
     CGSize dispalySize = CVImageBufferGetDisplaySize(imageBuffer);
-    
-    //NSLog(@"frame size %.2fx%.2f - buffer %.2fx%.2f", dispalySize.width, dispalySize.height, bufferSize.width, bufferSize.height);
-    
-    CVPixelBufferLockBaseAddress(imageBuffer, 0);
-    
     size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
     // Get the pixel buffer width and height
     size_t width = CVPixelBufferGetWidth(imageBuffer);
     size_t height = CVPixelBufferGetHeight(imageBuffer);
+#endif
+    //NSLog(@"frame size %.2fx%.2f - buffer %.2fx%.2f", dispalySize.width, dispalySize.height, bufferSize.width, bufferSize.height);
+    
+    CVPixelBufferLockBaseAddress(imageBuffer, 0);
     
     OSType pixelType = CVPixelBufferGetPixelFormatType(imageBuffer);
     
