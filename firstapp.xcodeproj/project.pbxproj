@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		0912DF471F0A851C0036D178 /* outputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 0912DF461F0A851C0036D178 /* outputStream.m */; };
 		0912DF4A1F0A8B220036D178 /* vthevcencoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0912DF491F0A8B220036D178 /* vthevcencoder.m */; };
+		093861621F0E7D1A008B0578 /* decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 093861611F0E7D1A008B0578 /* decoder.m */; };
+		093861651F0E7D2E008B0578 /* vt264decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 093861641F0E7D2E008B0578 /* vt264decoder.m */; };
+		093861681F0E7D3B008B0578 /* vthevcdecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 093861671F0E7D3B008B0578 /* vthevcdecoder.m */; };
 		0953CC311E372ABE00294EF9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0953CC301E372ABE00294EF9 /* main.m */; };
 		0953CC341E372ABE00294EF9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0953CC331E372ABE00294EF9 /* AppDelegate.m */; };
 		0953CC371E372ABE00294EF9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0953CC361E372ABE00294EF9 /* ViewController.m */; };
@@ -25,6 +28,12 @@
 		0912DF461F0A851C0036D178 /* outputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = outputStream.m; sourceTree = "<group>"; };
 		0912DF481F0A8B220036D178 /* vthevcencoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vthevcencoder.h; sourceTree = "<group>"; };
 		0912DF491F0A8B220036D178 /* vthevcencoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = vthevcencoder.m; sourceTree = "<group>"; };
+		093861601F0E7D1A008B0578 /* decoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = decoder.h; sourceTree = "<group>"; };
+		093861611F0E7D1A008B0578 /* decoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = decoder.m; sourceTree = "<group>"; };
+		093861631F0E7D2E008B0578 /* vt264decoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vt264decoder.h; sourceTree = "<group>"; };
+		093861641F0E7D2E008B0578 /* vt264decoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = vt264decoder.m; sourceTree = "<group>"; };
+		093861661F0E7D3B008B0578 /* vthevcdecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vthevcdecoder.h; sourceTree = "<group>"; };
+		093861671F0E7D3B008B0578 /* vthevcdecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = vthevcdecoder.m; sourceTree = "<group>"; };
 		0953CC2C1E372ABE00294EF9 /* firstapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = firstapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0953CC301E372ABE00294EF9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		0953CC321E372ABE00294EF9 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -92,6 +101,12 @@
 				0912DF461F0A851C0036D178 /* outputStream.m */,
 				09F82CFD1F0D013B00BE52A4 /* capture.h */,
 				09F82CFE1F0D013B00BE52A4 /* capture.m */,
+				093861601F0E7D1A008B0578 /* decoder.h */,
+				093861611F0E7D1A008B0578 /* decoder.m */,
+				093861631F0E7D2E008B0578 /* vt264decoder.h */,
+				093861641F0E7D2E008B0578 /* vt264decoder.m */,
+				093861661F0E7D3B008B0578 /* vthevcdecoder.h */,
+				093861671F0E7D3B008B0578 /* vthevcdecoder.m */,
 			);
 			path = firstapp;
 			sourceTree = "<group>";
@@ -183,7 +198,10 @@
 				0912DF4A1F0A8B220036D178 /* vthevcencoder.m in Sources */,
 				0953CC341E372ABE00294EF9 /* AppDelegate.m in Sources */,
 				098ED9001F0A27E7008736D6 /* vt264encoder.m in Sources */,
+				093861621F0E7D1A008B0578 /* decoder.m in Sources */,
+				093861681F0E7D3B008B0578 /* vthevcdecoder.m in Sources */,
 				0953CC311E372ABE00294EF9 /* main.m in Sources */,
+				093861651F0E7D2E008B0578 /* vt264decoder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
