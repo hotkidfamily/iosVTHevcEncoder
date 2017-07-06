@@ -34,6 +34,7 @@
 		093861641F0E7D2E008B0578 /* vt264decoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = vt264decoder.m; sourceTree = "<group>"; };
 		093861661F0E7D3B008B0578 /* vthevcdecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vthevcdecoder.h; sourceTree = "<group>"; };
 		093861671F0E7D3B008B0578 /* vthevcdecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = vthevcdecoder.m; sourceTree = "<group>"; };
+		093861691F0E7E8D008B0578 /* video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video.h; sourceTree = "<group>"; };
 		0953CC2C1E372ABE00294EF9 /* firstapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = firstapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0953CC301E372ABE00294EF9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		0953CC321E372ABE00294EF9 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -82,6 +83,7 @@
 		0953CC2E1E372ABE00294EF9 /* firstapp */ = {
 			isa = PBXGroup;
 			children = (
+				093861691F0E7E8D008B0578 /* video.h */,
 				098ED8FB1F0A27E7008736D6 /* encoder.h */,
 				098ED8FC1F0A27E7008736D6 /* encoder.m */,
 				0912DF481F0A8B220036D178 /* vthevcencoder.h */,

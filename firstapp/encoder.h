@@ -9,22 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreMedia/CoreMedia.h>
 #import <VideoToolbox/VideoToolbox.h>
-
-
-typedef NS_ENUM(NSUInteger, DWVideoStandard){
-    DWVideoStandardNone = 0,
-    DWVideoStandardH264,
-    DWVideoStandardHEVC,
-};
-
-
-typedef NS_ENUM(NSUInteger, DWCodecIndex){
-    DWCodecIndexNone,
-    DWCodecIndexLIBX264,
-    DWCodecIndexVT264,
-    DWCodecIndexLIBX265,
-    DWCodecIndexVTHEVC,
-};
+#import "video.h"
 
 
 typedef struct tagEncodeParam {
@@ -62,6 +47,7 @@ typedef struct tagEncodeStat {
 @property(nonatomic) NSString *name;
 @property(nonatomic) DWVideoStandard standard;
 @property(nonatomic) DWCodecIndex index;
+@property(nonatomic) DWCodecType type;
 @property(weak, nonatomic) id<EncoderDataDelegate> delegate;
 
 + (NSString *)listEncoders;

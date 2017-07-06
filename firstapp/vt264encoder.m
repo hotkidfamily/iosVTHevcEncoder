@@ -20,6 +20,7 @@
         self.name = @"Apple VideoToolbox 264";
         self.standard = DWVideoStandardH264;
         self.index = DWCodecIndexVT264;
+        self.type = DWCodecTypeEncoder;
         
         stats.frameCount = 0;
         stats.workingDuration = 0;

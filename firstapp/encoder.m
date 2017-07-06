@@ -15,6 +15,7 @@
     self.name = @"DW video codec base interface.";
     self.standard = DWVideoStandardNone;
     self.index = DWCodecIndexNone;
+    self.type = DWCodecTypeEncoder;
     
     return self;
 }

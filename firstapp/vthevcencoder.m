@@ -22,6 +22,7 @@
         self.name = @"Apple VideoToolbox HEVC";
         self.standard = DWVideoStandardHEVC;
         self.index = DWCodecIndexVTHEVC;
+        self.type = DWCodecTypeEncoder;
         
         stats.frameCount = 0;
         stats.workingDuration = 0;

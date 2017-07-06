@@ -7,7 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "decoder.h"
 
-@interface vthevcdecoder : NSObject
+@interface vthevcdecoder : decoder
 
 @end

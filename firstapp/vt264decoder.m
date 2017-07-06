@@ -10,4 +10,34 @@
 
 @implementation vt264decoder
 
+- (id)init {
+    
+    if (self = [super init]) {
+        self.name = @"DW video decoder base VideoToolbox.";
+        self.standard = DWVideoStandardH264;
+        self.index = DWCodecIndexVT264;
+    }
+    return self;
+}
+
+-(BOOL)reset:(DWDecodeParam *)params
+{
+    return YES;
+}
+
+-(BOOL)decode:(CMSampleBufferRef)buffer
+{
+    return YES;
+}
+
+-(BOOL)flush
+{
+    return YES;
+}
+
+-(BOOL)destroy
+{
+    return YES;
+}
+
 @end

@@ -7,7 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "decoder.h"
 
-@interface vt264decoder : NSObject
+@interface vt264decoder : decoder {
+    VTDecompressionSessionRef session;
+}
+
+-(BOOL)reset:(DWDecodeParam *)params;
+-(BOOL)decode:(CMSampleBufferRef)buffer;
+-(BOOL)flush;
+-(BOOL)destroy;
+-(NSString *)description;
 
 @end
