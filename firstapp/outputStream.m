@@ -8,23 +8,21 @@
 
 #import "outputStream.h"
 
-const Byte startCode[4] = { 0x00, 0x00, 0x00, 0x01 };
-
 @implementation OutputStream
 
-- (void)initFileManager {
+- (void)open:(NSString*)fileName {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     
-    NSString *h264File = [documentsDirectory stringByAppendingPathComponent:@"test.h265"];
-    [fileManager removeItemAtPath:h264File error:nil];
-    [fileManager createFileAtPath:h264File contents:nil attributes:nil];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
+    [fileManager removeItemAtPath:filePath error:nil];
+    [fileManager createFileAtPath:filePath contents:nil attributes:nil];
     
-    self.fileHandle = [NSFileHandle fileHandleForWritingAtPath:h264File];
+    self.fileHandle = [NSFileHandle fileHandleForWritingAtPath:filePath];
 }
 
-- (void)destoryFileManager {
+- (void)close {
     [self.fileHandle closeFile];
 }
 
@@ -32,6 +30,9 @@ const Byte startCode[4] = { 0x00, 0x00, 0x00, 0x01 };
     [self.fileHandle seekToEndOfFile];
     [self.fileHandle writeData:data];
 }
+
+
+#pragma mark - EncoderDataDelegate
 
 - (void)gotExtraData:(NSData*)vps sps:(NSData*)sps pps:(NSData*)pps
 {

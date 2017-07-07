@@ -33,5 +33,6 @@ typedef NS_ENUM(NSUInteger, DWCodecType){
     DWCodecTypeDecoder,
 };
 
+static const Byte startCode[4] = { 0x00, 0x00, 0x00, 0x01 };
 
 #endif /* video_h */

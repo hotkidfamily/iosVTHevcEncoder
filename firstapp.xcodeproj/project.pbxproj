@@ -12,7 +12,6 @@
 		093861621F0E7D1A008B0578 /* decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 093861611F0E7D1A008B0578 /* decoder.m */; };
 		093861651F0E7D2E008B0578 /* vt264decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 093861641F0E7D2E008B0578 /* vt264decoder.m */; };
 		093861681F0E7D3B008B0578 /* vthevcdecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 093861671F0E7D3B008B0578 /* vthevcdecoder.m */; };
-		0938616C1F0E83C4008B0578 /* fileparser.m in Sources */ = {isa = PBXBuildFile; fileRef = 0938616B1F0E83C4008B0578 /* fileparser.m */; };
 		0953CC311E372ABE00294EF9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0953CC301E372ABE00294EF9 /* main.m */; };
 		0953CC341E372ABE00294EF9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0953CC331E372ABE00294EF9 /* AppDelegate.m */; };
 		0953CC371E372ABE00294EF9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0953CC361E372ABE00294EF9 /* ViewController.m */; };
@@ -21,6 +20,7 @@
 		0953CC3F1E372ABE00294EF9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0953CC3D1E372ABE00294EF9 /* LaunchScreen.storyboard */; };
 		098ED8FF1F0A27E7008736D6 /* encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 098ED8FC1F0A27E7008736D6 /* encoder.m */; };
 		098ED9001F0A27E7008736D6 /* vt264encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 098ED8FE1F0A27E7008736D6 /* vt264encoder.m */; };
+		09EBE3921F0F54B500EB48DE /* packet.m in Sources */ = {isa = PBXBuildFile; fileRef = 09EBE3911F0F54B500EB48DE /* packet.m */; };
 		09F82CFF1F0D013B00BE52A4 /* capture.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F82CFE1F0D013B00BE52A4 /* capture.m */; };
 /* End PBXBuildFile section */
 
@@ -36,8 +36,6 @@
 		093861661F0E7D3B008B0578 /* vthevcdecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vthevcdecoder.h; sourceTree = "<group>"; };
 		093861671F0E7D3B008B0578 /* vthevcdecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = vthevcdecoder.m; sourceTree = "<group>"; };
 		093861691F0E7E8D008B0578 /* video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video.h; sourceTree = "<group>"; };
-		0938616A1F0E83C4008B0578 /* fileparser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fileparser.h; sourceTree = "<group>"; };
-		0938616B1F0E83C4008B0578 /* fileparser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = fileparser.m; sourceTree = "<group>"; };
 		0953CC2C1E372ABE00294EF9 /* firstapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = firstapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0953CC301E372ABE00294EF9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		0953CC321E372ABE00294EF9 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -52,6 +50,10 @@
 		098ED8FC1F0A27E7008736D6 /* encoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = encoder.m; sourceTree = "<group>"; };
 		098ED8FD1F0A27E7008736D6 /* vt264encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vt264encoder.h; sourceTree = "<group>"; };
 		098ED8FE1F0A27E7008736D6 /* vt264encoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = vt264encoder.m; sourceTree = "<group>"; };
+		09D30CC71F0F3B6400CDCA32 /* elementStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = elementStream.h; sourceTree = "<group>"; };
+		09D30CC81F0F3B6400CDCA32 /* elementStream.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = elementStream.m; sourceTree = "<group>"; };
+		09EBE3901F0F54B500EB48DE /* packet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = packet.h; sourceTree = "<group>"; };
+		09EBE3911F0F54B500EB48DE /* packet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = packet.m; sourceTree = "<group>"; };
 		09F82CFD1F0D013B00BE52A4 /* capture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = capture.h; sourceTree = "<group>"; };
 		09F82CFE1F0D013B00BE52A4 /* capture.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = capture.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -106,12 +108,14 @@
 				0912DF461F0A851C0036D178 /* outputStream.m */,
 				09F82CFD1F0D013B00BE52A4 /* capture.h */,
 				09F82CFE1F0D013B00BE52A4 /* capture.m */,
+				09D30CC71F0F3B6400CDCA32 /* elementStream.h */,
+				09D30CC81F0F3B6400CDCA32 /* elementStream.m */,
+				09EBE3901F0F54B500EB48DE /* packet.h */,
+				09EBE3911F0F54B500EB48DE /* packet.m */,
 				093861601F0E7D1A008B0578 /* decoder.h */,
 				093861611F0E7D1A008B0578 /* decoder.m */,
 				093861631F0E7D2E008B0578 /* vt264decoder.h */,
 				093861641F0E7D2E008B0578 /* vt264decoder.m */,
-				0938616A1F0E83C4008B0578 /* fileparser.h */,
-				0938616B1F0E83C4008B0578 /* fileparser.m */,
 				093861661F0E7D3B008B0578 /* vthevcdecoder.h */,
 				093861671F0E7D3B008B0578 /* vthevcdecoder.m */,
 			);
@@ -205,8 +209,8 @@
 				0912DF4A1F0A8B220036D178 /* vthevcencoder.m in Sources */,
 				0953CC341E372ABE00294EF9 /* AppDelegate.m in Sources */,
 				098ED9001F0A27E7008736D6 /* vt264encoder.m in Sources */,
+				09EBE3921F0F54B500EB48DE /* packet.m in Sources */,
 				093861621F0E7D1A008B0578 /* decoder.m in Sources */,
-				0938616C1F0E83C4008B0578 /* fileparser.m in Sources */,
 				093861681F0E7D3B008B0578 /* vthevcdecoder.m in Sources */,
 				0953CC311E372ABE00294EF9 /* main.m in Sources */,
 				093861651F0E7D2E008B0578 /* vt264decoder.m in Sources */,
@@ -284,6 +288,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -330,6 +335,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};

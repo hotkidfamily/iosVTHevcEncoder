@@ -20,9 +20,11 @@
 
 @end
 
+
 @implementation VT264Encoder
 
-- (id)init {
+- (id)init
+{
     
     if (self = [super init]) {
         self.initialized = NO;
@@ -110,7 +112,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     }
 }
 
--(BOOL)reset:(DWEncodeParam *)inParams {
+- (BOOL)reset:(DWEncodeParam *)inParams {
     
     params = *inParams;
     
@@ -198,7 +200,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     return self.initialized;
 }
 
--(BOOL)encode:(CMSampleBufferRef)sampleBuffer {
+- (BOOL)encode:(CMSampleBufferRef)sampleBuffer {
     
     CFRetain(sampleBuffer);
     
@@ -242,11 +244,11 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     return TRUE;
 }
 
--(BOOL)flush {
+- (BOOL)flush {
     return TRUE;
 }
 
--(BOOL)destroy {
+- (BOOL)destroy {
     
     if(session) {
         VTCompressionSessionInvalidate(session);

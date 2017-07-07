@@ -13,8 +13,11 @@
 #import "vt264encoder.h"
 #import "vthevcencoder.h"
 #import "outputStream.h"
+#import "elementStream.h"
 
-@interface ViewController ()
+@interface ViewController () {
+    dispatch_queue_t dispatchQueue;
+}
 
 @property (strong, nonatomic) IBOutlet UIView *mainView;
 @property (weak, nonatomic) IBOutlet UIButton *openButton;
@@ -22,16 +25,19 @@
 @property (weak, nonatomic) IBOutlet UIButton *encodeButton;
 @property (weak, nonatomic) IBOutlet UILabel *recordingLabel;
 @property (weak, nonatomic) IBOutlet UITextView *encoderListText;
+@property (weak, nonatomic) IBOutlet UIButton *playButton;
 
 - (IBAction)pressOpenButton:(id)sender;
 - (IBAction)pressSwitchButton:(id)sender;
 - (IBAction)pressEncodeButton:(id)sender;
 - (IBAction)touchSettingButton:(id)sender;
 - (IBAction)removeFromSettingButton:(id)sender;
+- (IBAction)pressPlayButton:(id)sender;
 
 @property(nonatomic) VTHevcEncoder *encoder;
 @property(nonatomic) VideoCapture *capture;
 @property(nonatomic) OutputStream *streamOutput;
+@property(nonatomic) ElementStream *streamInput;
 @property(nonatomic) NSTimer *timer;
 
 @end
@@ -48,6 +54,7 @@
     previewlayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
     [self.mainView.layer insertSublayer:previewlayer below:self. switchButton.layer];
     self.recordingLabel.hidden = YES;
+    //dispatchQueue = dispatch_queue_create("com.yanli.test.gcd.queue", DISPATCH_QUEUE_SERIAL);
 }
 
 
@@ -84,7 +91,7 @@
     
     if (!self.encoder) {
         self.streamOutput = [[OutputStream alloc] init];
-        [self.streamOutput initFileManager];
+        [self.streamOutput open:@"test.h265"];
         self.encoder = [[VTHevcEncoder alloc] init];
         DWEncodeParam params;
         params.bitrate = 1000*1024;
@@ -104,7 +111,7 @@
         self.capture.delegate = nil;
         [self.encoder destroy];
         self.encoder = nil;
-        [self.streamOutput destoryFileManager];
+        [self.streamOutput close];
         [self destoryTimer];
         self.recordingLabel.hidden = YES;
         [self.encodeButton setTitle:@"编码" forState:UIControlStateNormal];
@@ -119,6 +126,12 @@
 
 - (IBAction)removeFromSettingButton:(id)sender {
     self.encoderListText.hidden = YES;
+}
+
+- (IBAction)pressPlayButton:(id)sender {
+    self.streamInput = [[ElementStream alloc] init];
+//    [self.streamInput open:@"test.h265"];
+    
 }
 
 - (void)flushRecordingLabel {

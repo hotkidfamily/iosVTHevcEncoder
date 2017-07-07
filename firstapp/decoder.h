@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <VideoToolbox/VideoToolbox.h>
 #import "video.h"
+#import "packet.h"
 
 
 typedef struct tagDecodeParam {

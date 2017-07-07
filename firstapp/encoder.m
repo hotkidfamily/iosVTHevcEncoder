@@ -37,23 +37,6 @@
     return encoderNames;
 }
 
--(BOOL)reset:(DWEncodeParam *)params {
-    return YES;
-}
-
--(BOOL)encode:(CMSampleBufferRef)buffer {
-    // nil, just placehold
-    return YES;
-}
-
--(BOOL)flush {
-    return YES;
-}
-
--(BOOL)destroy {
-    return YES;
-}
-
 -(NSString *)description {
     return [NSString stringWithFormat:@"%@ - %@ -%@ - %@", @(self.standard), @(self.index), @(self.type), self.name];
 }

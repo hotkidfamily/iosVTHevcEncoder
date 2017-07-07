@@ -22,23 +22,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="J7e-gC-F8E">
-                                <rect key="frame" x="45" y="601" width="46" height="30"/>
+                                <rect key="frame" x="16" y="601" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="切换"/>
                                 <connections>
                                     <action selector="pressSwitchButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="76p-mw-h5s"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w05-DO-PiV">
-                                <rect key="frame" x="230" y="601" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="打开"/>
-                                <connections>
-                                    <action selector="pressOpenButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="lgv-dd-Y0X"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XXV-ff-Ltw">
-                                <rect key="frame" x="284" y="601" width="46" height="30"/>
+                                <rect key="frame" x="313" y="601" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="编码"/>
                                 <connections>
@@ -53,7 +45,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Yu-zV-mws">
-                                <rect key="frame" x="113" y="601" width="46" height="30"/>
+                                <rect key="frame" x="85" y="601" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="配置"/>
                                 <connections>
@@ -68,6 +60,22 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DY1-mC-9ZK">
+                                <rect key="frame" x="164" y="601" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="播放"/>
+                                <connections>
+                                    <action selector="pressPlayButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="99M-dh-5as"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w05-DO-PiV">
+                                <rect key="frame" x="247" y="601" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="打开"/>
+                                <connections>
+                                    <action selector="pressOpenButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="lgv-dd-Y0X"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
@@ -76,6 +84,7 @@
                         <outlet property="encoderListText" destination="Qeg-xZ-e8a" id="Xc0-Uk-SKC"/>
                         <outlet property="mainView" destination="8bC-Xf-vdC" id="WDt-zR-v8w"/>
                         <outlet property="openButton" destination="w05-DO-PiV" id="YTc-xE-FzP"/>
+                        <outlet property="playButton" destination="DY1-mC-9ZK" id="B8o-n9-Kkd"/>
                         <outlet property="recordingLabel" destination="RmJ-hU-dY6" id="hUK-5r-xqR"/>
                         <outlet property="switchButton" destination="J7e-gC-F8E" id="S7I-p0-i5Q"/>
                     </connections>
