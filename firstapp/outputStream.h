@@ -14,7 +14,7 @@
 
 @property(nonatomic) NSFileHandle *fileHandle;
 
-- (void)initFileManager;
-- (void)destoryFileManager;
+- (void)open:(NSString*)fileName;
+- (void)close;
 
 @end
