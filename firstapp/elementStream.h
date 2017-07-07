@@ -8,6 +8,14 @@
 
 #import "decoder.h"
 
+@interface packet: NSObject
+
+@property uint8_t* data;
+@property(nonatomic) NSUInteger length;
+
+@end
+
+
 @interface ElementStream: NSObject
 
 - (BOOL)open:(NSString *)fileName;
