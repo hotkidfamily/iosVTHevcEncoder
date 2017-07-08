@@ -103,12 +103,16 @@ static void * FocusModeContext = &FocusModeContext;
             [self.session addInput:self.input];
         }
         
+        NSNumber* val = [NSNumber numberWithUnsignedInt:kCVPixelFormatType_420YpCbCr8BiPlanarFullRange];
+        
         AVCaptureVideoDataOutput *videoOutput = [[AVCaptureVideoDataOutput alloc] init];
         [videoOutput setAlwaysDiscardsLateVideoFrames:YES];
         NSArray *formats = [videoOutput availableVideoCVPixelFormatTypes];
         for( NSNumber *format in formats){
-            [videoOutput setVideoSettings:[NSDictionary dictionaryWithObject:format forKey:(id)kCVPixelBufferPixelFormatTypeKey]];
-            break;
+            if (format == val) {
+                [videoOutput setVideoSettings:[NSDictionary dictionaryWithObject:format forKey:(id)kCVPixelBufferPixelFormatTypeKey]];
+                break;
+            }
         }
         
         [videoOutput setSampleBufferDelegate:(id)self queue:self.sessionQueue];
