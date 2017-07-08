@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "decoder.h"
 
-@interface vt264decoder : decoder
+@interface VT264Decoder : decoder
 
 
 @end

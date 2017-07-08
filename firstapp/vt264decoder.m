@@ -8,14 +8,15 @@
 
 #import "vt264decoder.h"
 
-@interface vt264decoder () {
+@interface VT264Decoder () {
     VTDecompressionSessionRef session;
     CMFormatDescriptionRef formatDescription;
     CMVideoDimensions dimensions;
+    BOOL bInitialized;
 }
 @end
 
-@implementation vt264decoder
+@implementation VT264Decoder
 
 
 - (id)init {
@@ -58,75 +59,54 @@ void didDecompressH264( void * CM_NULLABLE decompressionOutputRefCon,
 
 -(BOOL)reset:(DWDecodeParam *)params
 {
-    const uint8_t* const parameterSetPointers[2] = { (const uint8_t*)params->sps, (const uint8_t*)params->pps};
-    const size_t parameterSetSizes[2] = { params->spsLength,  params->ppsLength };
-    OSStatus status = CMVideoFormatDescriptionCreateFromH264ParameterSets(kCFAllocatorDefault,
-                                                                          2, //param count
-                                                                          parameterSetPointers,
-                                                                          parameterSetSizes,
-                                                                          4, //nal start code size
-                                                                          &formatDescription);
+    OSStatus status = noErr;
     
-    dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
+    CFDictionaryRef attrs = NULL;
+    const void *keys[] = { kCVPixelBufferPixelFormatTypeKey };
+    uint32_t v = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
+    const void *values[] = { CFNumberCreate(NULL, kCFNumberSInt32Type, &v) };
+    attrs = CFDictionaryCreate(NULL, keys, values, 1, NULL, NULL);
     
-    if(status == noErr) {
-        CFDictionaryRef attrs = NULL;
-        const void *keys[] = { kCVPixelBufferPixelFormatTypeKey };
-        uint32_t v = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
-        const void *values[] = { CFNumberCreate(NULL, kCFNumberSInt32Type, &v) };
-        attrs = CFDictionaryCreate(NULL, keys, values, 1, NULL, NULL);
-        
-        VTDecompressionOutputCallbackRecord callBackRecord;
-        callBackRecord.decompressionOutputCallback = didDecompressH264;
-        callBackRecord.decompressionOutputRefCon = (__bridge void *)(self);
-        
-        status = VTDecompressionSessionCreate(kCFAllocatorDefault,
-                                              formatDescription,
-                                              NULL, attrs,
-                                              &callBackRecord,
-                                              &session);
-        CFRelease(attrs);
-    }
+    VTDecompressionOutputCallbackRecord callBackRecord;
+    callBackRecord.decompressionOutputCallback = didDecompressH264;
+    callBackRecord.decompressionOutputRefCon = (__bridge void *)(self);
+    
+    status = VTDecompressionSessionCreate(kCFAllocatorDefault,
+                                          params->formatDesc,
+                                          NULL, attrs,
+                                          &callBackRecord,
+                                          &session);
+    CFRelease(attrs);
     
     return status == noErr;
 }
 
 
--(BOOL)decode:(CMBlockBufferRef)buffer
+-(BOOL)decode:(CMSampleBufferRef)sampleBuffer
 {
     CVPixelBufferRef outputPixelBuffer = NULL;
-    const uint8_t *h264Data, h264DataSize;
+    OSStatus status = noErr;
     
-    CMBlockBufferRef blockBuffer = NULL;
-    OSStatus status  = CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault,
-                                                          (void*)h264Data, h264DataSize,
-                                                          kCFAllocatorNull,
-                                                          NULL, 0, h264DataSize,
-                                                          0, &blockBuffer);
-    if(status == kCMBlockBufferNoErr) {
-        CMSampleBufferRef sampleBuffer = NULL;
-        const size_t sampleSizeArray[] = {h264DataSize};
-        status = CMSampleBufferCreateReady(kCFAllocatorDefault,
-                                           blockBuffer,
-                                           formatDescription ,
-                                           1, 0, NULL, 1, sampleSizeArray,
-                                           &sampleBuffer);
-        if (status == kCMBlockBufferNoErr && sampleBuffer) {
-            VTDecodeFrameFlags flags = 0;
-            VTDecodeInfoFlags flagOut = 0;
-            status = VTDecompressionSessionDecodeFrame(session,
-                                                                      sampleBuffer,
-                                                                      flags,
-                                                                      &outputPixelBuffer,
-                                                                      &flagOut);
-            /* vterror.h */
-            if(status != noErr) {
-            }
-            
-            CFRelease(sampleBuffer);
-        }
-        CFRelease(blockBuffer);
+    if (!session) {
+        status = kVTInvalidSessionErr;
     }
+    
+    if (status == noErr && sampleBuffer) {
+        VTDecodeFrameFlags flags = 0;
+        VTDecodeInfoFlags flagOut = 0;
+        status = VTDecompressionSessionDecodeFrame(session,
+                                                  sampleBuffer,
+                                                  flags,
+                                                  &outputPixelBuffer,
+                                                  &flagOut);
+        CFRelease(sampleBuffer);
+    }
+    
+    /* vterror.h */
+    if(status != noErr) {
+        NSLog(@"decode frame error for %d.", status);
+    }
+    
     return status == noErr;
 }
 
