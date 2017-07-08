@@ -29,10 +29,12 @@
 
 #pragma mark - Utils
 
-+(CMBlockBufferRef)createCMBlockBufferFromData:(NSData *)naluData
++(CMSampleBufferRef)createCMSampleBufferFromData:(NSData *)naluData
+                                         andDesc:(CMFormatDescriptionRef)formatDesc
 {
     OSStatus status = noErr;
-    CMBlockBufferRef blockBuffer = NULL;
+    CMBlockBufferRef blockBuffer = nil;
+    CMSampleBufferRef sampleBuffer = nil;
     uint32_t h264DataSize = 0;
     uint8_t *h264Data = nil;
     
@@ -42,26 +44,39 @@
         NSLog(@"Fail to alloc buffer at %p(%d)", h264Data, h264DataSize);
         status = kCMBlockBufferBlockAllocationFailedErr;
     }
+    else {
+        [naluData getBytes:h264Data length:h264DataSize];
+    }
     
     if (status == noErr){
         [naluData getBytes:h264Data length:h264DataSize];
         
         status  = CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault,
-                                                              (void*)h264Data, h264DataSize,
-                                                              kCFAllocatorNull,
-                                                              NULL, 0, h264DataSize,
-                                                              0, &blockBuffer);
+                                                     (void*)h264Data, h264DataSize,
+                                                     kCFAllocatorNull,
+                                                     NULL, 0, h264DataSize,
+                                                     0, &blockBuffer);
     }
     
+    if(status == kCMBlockBufferNoErr) {
+        const size_t sampleSizeArray[] = { h264DataSize };
+        status = CMSampleBufferCreateReady(kCFAllocatorDefault,
+                                           blockBuffer,
+                                           formatDesc,
+                                           1, 0, NULL, 1, sampleSizeArray,
+                                           &sampleBuffer);
+    }
+    
+    CFRelease(blockBuffer);
     
     if (status == kCMBlockBufferNoErr) {
-        return blockBuffer;
+        return sampleBuffer;
     }
     else {
         if (h264Data)
             free(h264Data);
         
-        CFRelease(blockBuffer);
+        CFRelease(sampleBuffer);
         NSLog(@"Fail to create block buffer ret %d", (int)status);
         return nil;
     }
@@ -83,6 +98,10 @@
         NSLog(@"Fail to alloc buffer at %p(%d) and %p(%d)", sps, spsSize, pps, ppsSize);
         status = kCMFormatDescriptionError_AllocationFailed;
     }
+    else {
+        [spsData getBytes:sps length:spsData.length];
+        [ppsData getBytes:pps length:ppsData.length];
+    }
     
     if (status == noErr) {
         const uint8_t* const parameterSetPointers[2] = { (const uint8_t*)sps, (const uint8_t*)pps};
@@ -96,16 +115,16 @@
                                                                      &h264FormatDescription);
     }
     
+    if (sps)
+        free(sps);
+    
+    if (pps)
+        free(pps);
+    
     if (status == kCMBlockBufferNoErr) {
         return h264FormatDescription;
     }
     else {
-        if (sps)
-            free(sps);
-        
-        if (pps)
-            free(pps);
-        
         CFRelease(h264FormatDescription);
         
         NSLog(@"Fail to create format desc ret %d", (int)status);
@@ -134,6 +153,11 @@
     if (!vps || !sps || !pps){
         NSLog(@"Fail to alloc buffer at %p(%d), %p(%d) and %p(%d)", vps, vpsSize, sps, spsSize, pps, ppsSize);
         status = kCMFormatDescriptionError_AllocationFailed;
+    }
+    else {
+        [vpsData getBytes:vps length:vpsData.length];
+        [spsData getBytes:sps length:spsData.length];
+        [ppsData getBytes:pps length:ppsData.length];
     }
     
     if (status == noErr) {

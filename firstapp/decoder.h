@@ -17,6 +17,7 @@ typedef struct tagDecodeParam {
     char *pps;
     uint32_t ppsLength;
     DWCodecIndex codec_id;
+    uint32_t pixelFormat;
     CMFormatDescriptionRef formatDesc;
 }DWDecodeParam;
 
@@ -46,12 +47,12 @@ typedef struct tagDecodeStat {
 @property(nonatomic) DWCodecType type;
 @property(weak, nonatomic) id<DecoderDataDelegate> delegate;
 
-+ (CMBlockBufferRef)createCMBlockBufferFromData:(NSData *)naluData;
++ (CMSampleBufferRef)createCMSampleBufferFromData:(NSData *)naluData andDesc:(CMFormatDescriptionRef)formatDesc;
 + (CMFormatDescriptionRef)createCMFormatDescFromSPS:(NSData *)spsData andPPS:(NSData*)ppsData;
 + (CMFormatDescriptionRef)createCMFormatDescFromVPS:(NSData *)vpsData andSPS:(NSData *)spsData andPPS:(NSData*)ppsData;
 
 -(BOOL)reset:(DWDecodeParam *)params;
--(BOOL)decode:(CMBlockBufferRef)buffer;
+-(BOOL)decode:(CMSampleBufferRef)buffer;
 -(BOOL)flush;
 -(BOOL)destroy;
 -(NSString *)description;
