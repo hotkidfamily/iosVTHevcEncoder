@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "decoder.h"
 
-@interface vthevcdecoder : decoder
+@interface VTHevcDecoder : decoder
 
 
 @end
