@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import <VideoToolbox/VideoToolbox.h>
 #import "video.h"
-#import "packet.h"
 
 
 typedef struct tagDecodeParam {
@@ -51,6 +50,10 @@ typedef struct tagDecodeStat {
 + (CMFormatDescriptionRef)createCMFormatDescFromSPS:(NSData *)spsData andPPS:(NSData*)ppsData;
 + (CMFormatDescriptionRef)createCMFormatDescFromVPS:(NSData *)vpsData andSPS:(NSData *)spsData andPPS:(NSData*)ppsData;
 
+-(BOOL)reset:(DWDecodeParam *)params;
+-(BOOL)decode:(CMBlockBufferRef)buffer;
+-(BOOL)flush;
+-(BOOL)destroy;
 -(NSString *)description;
 
 @end

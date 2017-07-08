@@ -10,8 +10,9 @@
 
 @interface packet: NSObject
 
-@property uint8_t* data;
+@property(nonatomic) uint8_t* data;
 @property(nonatomic) NSUInteger length;
+@property(nonatomic) uint32_t packetType;
 
 @end
 

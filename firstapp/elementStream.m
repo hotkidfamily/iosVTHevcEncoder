@@ -55,7 +55,7 @@
 - (BOOL)open:(NSString *)fileName
 {
     bufferSize = 0;
-    bufferCap = 4*1024;
+    bufferCap = 400*1024;
     buffer = malloc(bufferCap);
     self.fileName = fileName;
     
@@ -73,7 +73,7 @@
 {
     if(bufferSize < bufferCap && self.streamReader.hasBytesAvailable) {
         NSInteger readBytes = [self.streamReader read:buffer + bufferSize maxLength:bufferCap - bufferSize];
-        buffer += readBytes;
+        bufferSize += readBytes;
     }
     
     if(memcmp(buffer, startCode, 4) != 0) {
@@ -89,6 +89,7 @@
                     NSInteger packetSize = bufferBegin - buffer - 3;
                     packet *vp = [[packet alloc] initWithSize:packetSize];
                     memcpy(vp.data, buffer, packetSize);
+                    vp.packetType = vp.data[4];
                     
                     memmove(buffer, buffer + packetSize, bufferSize - packetSize);
                     bufferSize -= packetSize;
