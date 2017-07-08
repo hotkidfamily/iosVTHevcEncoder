@@ -48,15 +48,36 @@
 void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStatus status, VTEncodeInfoFlags infoFlags,
                      CMSampleBufferRef sampleBuffer )
 {
-    NSLog(@"didCompressH264 called with status %d infoFlags %d", (int)status, (int)infoFlags);
-    if (status != 0) return;
+    if (status != 0) {
+        NSLog(@"didCompressH264 called with status %d infoFlags %d", (int)status, (int)infoFlags);
+        return;
+    }
     
     if (!CMSampleBufferDataIsReady(sampleBuffer))
     {
         NSLog(@"didCompressH264 data is not ready ");
         return;
     }
+    
     VT264Encoder* encoder = (__bridge VT264Encoder*)outputCallbackRefCon;
+    
+    CMTime presentTimestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+    CMTime decodeTimestamp = CMSampleBufferGetDecodeTimeStamp(sampleBuffer);
+    int64_t dtsInMs = 0,  ptsInMs = 0;
+    if (presentTimestamp.flags & kCMTimeFlags_Valid) {
+        ptsInMs = presentTimestamp.value * 1000 / presentTimestamp.timescale;
+    }
+    if (decodeTimestamp.flags & kCMTimeFlags_Valid) {
+        dtsInMs = decodeTimestamp.value * 1000 / decodeTimestamp.timescale;
+    }
+    NSLog(@"pts %lld dts %lld", ptsInMs, dtsInMs);
+    
+    if (encoder->startPTSInMS == 0){
+        encoder->startPTSInMS = ptsInMs;
+    }
+    else {
+        encoder->stats.workingDuration = (uint32_t)((ptsInMs - encoder->startPTSInMS)/1000);
+    }
     
     // Check if we have got a key frame first
     bool keyframe = !CFDictionaryContainsKey( (CFArrayGetValueAtIndex(CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true), 0)), kCMSampleAttachmentKey_NotSync);
@@ -208,18 +229,11 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     
     CMTime presentTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
     CMTime durationTime = kCMTimeInvalid; //CMSampleBufferGetDuration(sampleBuffer);
-    int64_t ptsInMs = presentTime.value * 1000 / presentTime.timescale;
-    if (startPTSInMS == 0){
-        startPTSInMS = ptsInMs;
-    }
-    else {
-        stats.workingDuration = (uint32_t)((ptsInMs - startPTSInMS)/1000);
-    }
     
     CGSize bufferSize = CVImageBufferGetEncodedSize(imageBuffer);
     CGSize dispalySize = CVImageBufferGetDisplaySize(imageBuffer);
 
-    NSLog(@"frame %lld size %.2fx%.2f - buffer %.2fx%.2f", ptsInMs, dispalySize.width, dispalySize.height, bufferSize.width, bufferSize.height);
+    //NSLog(@"frame size %.2fx%.2f - buffer %.2fx%.2f", dispalySize.width, dispalySize.height, bufferSize.width, bufferSize.height);
     
     CVPixelBufferLockBaseAddress(imageBuffer, 0);
     
@@ -236,7 +250,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         VTCompressionSessionEncodeFrame(session, imageBuffer, presentTime, durationTime, nil, nil, &flags);
     }
     
-    NSLog(@"pixel buffer %ldx%ld, stride %ld, pixel %x", width, height, bytesPerRow, (unsigned int)pixelType);
+    //NSLog(@"pixel buffer %ldx%ld, stride %ld, pixel %x", width, height, bytesPerRow, (unsigned int)pixelType);
     
     CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
     
