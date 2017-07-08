@@ -21,38 +21,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="J7e-gC-F8E">
-                                <rect key="frame" x="16" y="601" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="切换"/>
-                                <connections>
-                                    <action selector="pressSwitchButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="76p-mw-h5s"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XXV-ff-Ltw">
-                                <rect key="frame" x="313" y="601" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="编码"/>
-                                <connections>
-                                    <action selector="pressEncodeButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="kXz-Oo-s5J"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Recording..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RmJ-hU-dY6">
-                                <rect key="frame" x="45" y="54" width="137" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Yu-zV-mws">
-                                <rect key="frame" x="85" y="601" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="配置"/>
-                                <connections>
-                                    <action selector="removeFromSettingButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="uDA-VU-qvY"/>
-                                    <action selector="touchSettingButton:" destination="BYZ-38-t0r" eventType="touchDown" id="zfD-hP-ADY"/>
-                                </connections>
-                            </button>
                             <textView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" text="Lorem ipsum dolor sit er elit " textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Qeg-xZ-e8a">
                                 <rect key="frame" x="45" y="111" width="240" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -60,33 +28,74 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DY1-mC-9ZK">
-                                <rect key="frame" x="164" y="601" width="46" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cFq-b7-sIG">
+                                <rect key="frame" x="321" y="587" width="49" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="编码"/>
+                                <connections>
+                                    <action selector="pressEncodeButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="D4f-3C-iJ2"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Y6-S7-HGi">
+                                <rect key="frame" x="203" y="587" width="49" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="配置"/>
+                                <connections>
+                                    <action selector="removeFromSettingButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="nNw-1G-o4c"/>
+                                    <action selector="touchSettingButton:" destination="BYZ-38-t0r" eventType="touchDown" id="w3B-z5-peE"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bQf-C1-nuO">
+                                <rect key="frame" x="144" y="587" width="49" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="播放"/>
                                 <connections>
-                                    <action selector="pressPlayButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="99M-dh-5as"/>
+                                    <action selector="pressPlayButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="o4E-9q-yq7"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w05-DO-PiV">
-                                <rect key="frame" x="247" y="601" width="46" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nnp-RZ-4bP">
+                                <rect key="frame" x="262" y="587" width="49" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="15"/>
                                 <state key="normal" title="打开"/>
                                 <connections>
-                                    <action selector="pressOpenButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="lgv-dd-Y0X"/>
+                                    <action selector="pressOpenButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="eJc-RU-XxS"/>
                                 </connections>
                             </button>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="fB8-C0-pgw">
+                                <rect key="frame" x="26" y="587" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="onHevcSwitchValueChange:" destination="BYZ-38-t0r" eventType="valueChanged" id="3b1-XP-mNE"/>
+                                </connections>
+                            </switch>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="V49-Xb-EpK">
+                                <rect key="frame" x="85" y="587" width="49" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="前后"/>
+                                <connections>
+                                    <action selector="pressSwitchButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bft-Ke-WqE"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Recording..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lgP-sg-9v2">
+                                <rect key="frame" x="45" y="54" width="137" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <connections>
-                        <outlet property="encodeButton" destination="XXV-ff-Ltw" id="DjJ-Ve-CE5"/>
+                        <outlet property="encodeButton" destination="cFq-b7-sIG" id="zvY-36-PcA"/>
                         <outlet property="encoderListText" destination="Qeg-xZ-e8a" id="Xc0-Uk-SKC"/>
-                        <outlet property="mainView" destination="8bC-Xf-vdC" id="WDt-zR-v8w"/>
-                        <outlet property="openButton" destination="w05-DO-PiV" id="YTc-xE-FzP"/>
-                        <outlet property="playButton" destination="DY1-mC-9ZK" id="B8o-n9-Kkd"/>
-                        <outlet property="recordingLabel" destination="RmJ-hU-dY6" id="hUK-5r-xqR"/>
-                        <outlet property="switchButton" destination="J7e-gC-F8E" id="S7I-p0-i5Q"/>
+                        <outlet property="hevcSwitch" destination="fB8-C0-pgw" id="A13-eP-HJW"/>
+                        <outlet property="mainView" destination="8bC-Xf-vdC" id="9la-tD-f0T"/>
+                        <outlet property="openButton" destination="Nnp-RZ-4bP" id="emV-c1-Uiy"/>
+                        <outlet property="playButton" destination="bQf-C1-nuO" id="6SR-ja-KPH"/>
+                        <outlet property="recordingLabel" destination="lgP-sg-9v2" id="EwQ-JY-Lo0"/>
+                        <outlet property="switchButton" destination="V49-Xb-EpK" id="wzU-SC-eFg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
