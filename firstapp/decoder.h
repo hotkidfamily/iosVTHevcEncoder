@@ -30,7 +30,7 @@ typedef struct tagDecodeStat {
 
 @protocol DecoderDataDelegate <NSObject>
 
-- (void)gotDecodedData:(CMSampleBufferRef)samplebuffer;
+- (void)gotDecodedData:(CVPixelBufferRef)samplebuffer;
 
 @end
 

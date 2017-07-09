@@ -37,6 +37,13 @@
     CMSampleBufferRef sampleBuffer = nil;
     uint32_t h264DataSize = 0;
     uint8_t *h264Data = nil;
+    static int index = 0;
+    CMSampleTimingInfo timeInfo = {
+        kCMTimeInvalid,
+        CMTimeMake(index, 25),
+        kCMTimeInvalid,
+    };
+    index ++;
     
     h264DataSize = (uint32_t)naluData.length;
     h264Data = (uint8_t*)malloc(h264DataSize);
@@ -63,7 +70,7 @@
         status = CMSampleBufferCreateReady(kCFAllocatorDefault,
                                            blockBuffer,
                                            formatDesc,
-                                           1, 0, NULL, 1, sampleSizeArray,
+                                           1, 0, &timeInfo, 1, sampleSizeArray,
                                            &sampleBuffer);
     }
     
@@ -172,16 +179,22 @@
                                                                      &hevcFormatDescription);
     }
     
+    if (vps) {
+        free(vps);
+    }
+    
+    if (sps) {
+        free(sps);
+    }
+    
+    if (pps) {
+        free(pps);
+    }
+    
     if (status == kCMBlockBufferNoErr) {
         return hevcFormatDescription;
     }
     else {
-        if (sps)
-            free(sps);
-        
-        if (pps)
-            free(pps);
-        
         CFRelease(hevcFormatDescription);
         
         NSLog(@"Fail to create format desc ret %d", (int)status);

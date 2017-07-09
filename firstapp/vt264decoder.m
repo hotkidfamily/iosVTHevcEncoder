@@ -38,22 +38,25 @@ void didDecompressH264( void * CM_NULLABLE decompressionOutputRefCon,
                        CMTime presentationTimeStamp,
                        CMTime presentationDuration)
 {
-    if (!imageBuffer) {
+    if ( status != noErr
+        || !imageBuffer) {
+        NSLog(@"didDecompressH264 return %d with image %p", (int)status, imageBuffer);
         return;
     }
     
-    if (status != noErr) {
-        return;
-    }
+    int64_t ptsInMs = presentationTimeStamp.value * 1000 / presentationTimeStamp.timescale;
+    NSLog(@"decode got a frame with pts %lld", ptsInMs);
     
-    int64_t outputBufferAddress = (int64_t)sourceFrameRefCon;
-    if (outputBufferAddress < 0x100) {
-        return;
-    }
+    VT264Decoder* encoder = (__bridge VT264Decoder*)decompressionOutputRefCon;
     
-    CVPixelBufferRef *outputPixelBuffer = (CVPixelBufferRef *)sourceFrameRefCon;
     CVPixelBufferRef output = CVPixelBufferRetain(imageBuffer);
-    *outputPixelBuffer = output;
+    
+    if (encoder.delegate) {
+        [encoder.delegate gotDecodedData:output];
+    }
+    else {
+        CVPixelBufferRelease(output);
+    }
 }
 
 
@@ -92,7 +95,7 @@ void didDecompressH264( void * CM_NULLABLE decompressionOutputRefCon,
     }
     
     if (status == noErr && sampleBuffer) {
-        VTDecodeFrameFlags flags = 0;
+        VTDecodeFrameFlags flags = kVTDecodeFrame_EnableTemporalProcessing |kVTDecodeFrame_EnableAsynchronousDecompression;
         VTDecodeInfoFlags flagOut = 0;
         status = VTDecompressionSessionDecodeFrame(session,
                                                   sampleBuffer,
@@ -117,8 +120,12 @@ void didDecompressH264( void * CM_NULLABLE decompressionOutputRefCon,
 
 -(BOOL)destroy
 {
-    VTDecompressionSessionInvalidate(session);
-    CFRelease(session);
+    if (session){
+        VTDecompressionSessionInvalidate(session);
+        CFRelease(session);
+        session = nil;
+    }
+    
     return YES;
 }
 

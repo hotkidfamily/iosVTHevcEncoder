@@ -16,6 +16,18 @@
 #import "vthevcdecoder.h"
 #import "outputStream.h"
 #import "elementStream.h"
+#import "AAPLEAGLLayer.h"
+
+
+typedef NS_ENUM(NSUInteger, NALACTION) {
+    NALACTIONExtraVPS,
+    NALACTIONExtraSPS,
+    NALACTIONExtraPPS,
+    NALACTIONSkip,
+    NALACTIONNormal,
+    NALACTIONKey,
+};
+
 
 typedef NS_ENUM(NSUInteger, VCAppStatus) {
     VCAppStatusNone,
@@ -47,7 +59,7 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
 
 @property(nonatomic) BOOL hevcEnabled;
 @property(nonatomic) AVCaptureVideoPreviewLayer *previewlayer;
-@property(nonatomic) AVCaptureVideoPreviewLayer *decodelayer;
+@property(nonatomic) AAPLEAGLLayer *decoLayer;
 @property(nonatomic) Encoder *encoder;
 @property(nonatomic) decoder *decoder;
 @property(nonatomic) VideoCapture *capture;
@@ -120,7 +132,8 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
                 return;
             }
             
-            self.capture.delegate = self;
+             __weak __typeof__(self) wself = self;
+            self.capture.delegate = wself;
             [self.capture start];
             self.curStatus = VCAppStatusCapture;
         });
@@ -202,161 +215,220 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
     self.encoderListText.hidden = YES;
 }
 
+
+- (NALACTION)paserh264Naltype:(uint8_t)type {
+    NALACTION action = NALACTIONSkip;
+    uint8_t nalType = type & 0x1f;
+    
+    switch (nalType) {
+        case 0x05:
+            action = NALACTIONKey;
+            break;
+        case 0x07:
+            action = NALACTIONExtraSPS;
+            break;
+        case 0x08:
+            action = NALACTIONExtraPPS;
+            break;
+        case 0x06:
+            action =NALACTIONSkip;
+            break;
+        default:
+            action =NALACTIONNormal;
+            break;
+    }
+    return action;
+}
+
+- (NALACTION)paserh265Naltype:(uint8_t)type {
+    
+    NALACTION action = NALACTIONSkip;
+    uint8_t nalType = (type >> 1) & 0x3f;
+    
+    switch (nalType) {
+        case 0x20:
+            action = NALACTIONExtraVPS;
+            break;
+        case 0x21:
+            action = NALACTIONExtraSPS;
+            break;
+        case 0x22:
+            action = NALACTIONExtraPPS;
+            break;
+        case 0x07:
+            action = NALACTIONNormal;
+            break;
+        case 0x13: // NAL_UNIT_CODED_SLICE_IDR
+        case 0x14: // NAL_UNIT_CODED_SLICE_IDR_N_LP
+            action = NALACTIONKey;
+            break;
+        case 0x27:
+        default:
+            action = NALACTIONSkip;
+            break;
+    }
+    
+    return action;
+}
+
+- (NALACTION)paserNaltype:(uint8_t)naltype withStandard:(DWVideoStandard)standard{
+    
+    NALACTION action = NALACTIONSkip;
+    if (standard == DWVideoStandardH264) {
+        action = [self paserh264Naltype:naltype];
+    }
+    else if (standard == DWVideoStandardHEVC) {
+        action = [self paserh265Naltype:naltype];
+    }
+    else {
+        // nothing
+    }
+    
+    return action;
+}
+
 - (IBAction)pressPlayButton:(id)sender {
     
     if (self.curStatus != VCAppStatusNone){
         return ;
     }
     
-    dispatch_async( decodeQueue, ^{
+    if (!self.decoder) {
+        self.decoLayer = [[AAPLEAGLLayer alloc] initWithFrame:CGRectMake(0, 0, 544, 960)] ;
+        [self.view.layer insertSublayer:self.decoLayer below:self.encodeButton.layer];
         self.curStatus = VCAppStatusPlay;
-        BOOL bH265 = self.hevcEnabled;
-        Class decoderClass;
-        NSString *fileName;
-        if (bH265) {
-            decoderClass = [VT264Decoder class];
-            fileName = @"test.h265";
-        }
-        else {
-            decoderClass = [VT264Decoder class];
-            fileName = @"test.h264";
-        }
-        self.decoder = [[decoderClass alloc] init];
-        self.streamInput = [[ElementStream alloc] init];
-        [self.streamInput open:fileName];
-        NSData *sps = nil, *pps = nil, *vps = nil;
-        packet *pkt = nil;
-        DWDecodeParam cfg;
-        cfg.sps = nil;
-        cfg.spsLength = 0;
-        cfg.pps = nil;
-        cfg.ppsLength = 0;
-        cfg.formatDesc = nil;
-        cfg.codec_id = DWCodecIndexVT264DEC;
-        uint32_t updateExtraDataFlag = 0;
         
-        while ((pkt = [self.streamInput nextPacket])) {
-            uint8_t nalType = 0;
-            
-            if (bH265) {
-                nalType = (pkt.packetType >> 1) & 0x3f;
+        dispatch_async( decodeQueue, ^{
+            DWVideoStandard standard = self.hevcEnabled?DWVideoStandardHEVC:DWVideoStandardH264;
+            uint8_t mask = 0xff;
+            Class decoderClass;
+            NSString *fileName;
+            if (standard == DWVideoStandardHEVC) {
+                decoderClass = [VTHevcDecoder class];
+                fileName = @"test.h265";
+                mask = 0x07;
             }
             else {
-                nalType = pkt.packetType & 0x1f;
+                decoderClass = [VT264Decoder class];
+                fileName = @"test.h264";
+                mask = 0x03;
             }
             
-            NSLog(@"get a packet %d - %lu", nalType, pkt.length);
+            self.decoder = [[decoderClass alloc] init];
             
-            switch (nalType) {
-                case 0x5:
-                {
-                    [self.decoder reset:&cfg];
-                    uint32_t nalSize = (uint32_t)(pkt.length - 4);
-                    uint8_t *pNalSize = (uint8_t*)(&nalSize);
-                    pkt.data[0] = *(pNalSize + 3);
-                    pkt.data[1] = *(pNalSize + 2);
-                    pkt.data[2] = *(pNalSize + 1);
-                    pkt.data[3] = *(pNalSize);
-                    NSData * data = [[NSData alloc] initWithBytes:pkt.data length:pkt.length];
-                    
-                    CMSampleBufferRef ref = [decoder createCMSampleBufferFromData:data andDesc:cfg.formatDesc];
-                    [self.decoder decode:ref];
-                    //CFRelease(ref);
-                }
-                    break;
-                case 0x7:
-                {
-                    if (sps) {
-                        sps = nil;
-                    }
-                    updateExtraDataFlag |= 1<<0;
-                    NSData * data = [[NSData alloc] initWithBytes:(pkt.data+4) length:pkt.length-4];
-                    sps = data;
-                }
-                    break;
-                case 0x8:
-                {
-                    if (pps) {
-                        pps = nil;
-                    }
-                    updateExtraDataFlag |= 1<<1;
-                    NSData * data = [[NSData alloc] initWithBytes:(pkt.data+4) length:pkt.length-4];
-                    pps = data;
-                }
-                    break;
-                case 0x20:
-                {
-                    if (vps) {
-                        vps = nil;
-                    }
-                    updateExtraDataFlag |= 1<<0;
-                    NSData * data = [[NSData alloc] initWithBytes:(pkt.data+4) length:pkt.length-4];
-                    vps = data;
-                }
-                    break;
-                case 0x21:
-                {
-                    if (sps) {
-                        sps = nil;
-                    }
-                    updateExtraDataFlag |= 1<<0;
-                    NSData * data = [[NSData alloc] initWithBytes:(pkt.data+4) length:pkt.length-4];
-                    sps = data;
-                }
-                    break;
-                case 0x22:
-                {
-                    if (pps) {
-                        pps = nil;
-                    }
-                    updateExtraDataFlag |= 1<<1;
-                    NSData * data = [[NSData alloc] initWithBytes:(pkt.data+4) length:pkt.length-4];
-                    pps = data;
-                }
-                    break;
-                default:
-                {
-                    uint32_t nalSize = (uint32_t)(pkt.length - 4);
-                    uint8_t *pNalSize = (uint8_t*)(&nalSize);
-                    pkt.data[0] = *(pNalSize + 3);
-                    pkt.data[1] = *(pNalSize + 2);
-                    pkt.data[2] = *(pNalSize + 1);
-                    pkt.data[3] = *(pNalSize);
-                    NSData * data = [[NSData alloc] initWithBytes:pkt.data length:pkt.length];
-                    CMSampleBufferRef ref = [decoder createCMSampleBufferFromData:data andDesc:cfg.formatDesc];
-                    [self.decoder decode:ref];
-                    //CFRelease(ref);
-                }
-                    break;
-            }
+            __weak __typeof__(self)wSelf = self;
+            self.decoder.delegate = wSelf;
+            self.streamInput = [[ElementStream alloc] init];
+            [self.streamInput open:fileName];
+            NSData *sps = nil, *pps = nil, *vps = nil;
+            packet *pkt = nil;
+            DWDecodeParam cfg;
+            cfg.sps = nil;
+            cfg.spsLength = 0;
+            cfg.pps = nil;
+            cfg.ppsLength = 0;
+            cfg.formatDesc = nil;
+            cfg.codec_id = DWCodecIndexVT264DEC;
+            uint32_t updateExtraDataFlag = 0;
             
-            if (bH265) {
-                if (updateExtraDataFlag & (~0x07)) {
+            while ((pkt = [self.streamInput nextPacket])) {
+                
+                NALACTION action = [self paserNaltype:pkt.packetType withStandard:standard];
+                NSLog(@"get a packet %@ - %lu", @(action), (unsigned long)pkt.length);
+                switch (action) {
+                    case NALACTIONSkip:
+                        break;
+                    case NALACTIONKey:
+                    {
+                        [self.decoder destroy];
+                        [self.decoder reset:&cfg];
+                        uint32_t nalSize = (uint32_t)(pkt.length - 4);
+                        uint8_t *pNalSize = (uint8_t*)(&nalSize);
+                        pkt.data[0] = *(pNalSize + 3);
+                        pkt.data[1] = *(pNalSize + 2);
+                        pkt.data[2] = *(pNalSize + 1);
+                        pkt.data[3] = *(pNalSize);
+                        NSData * data = [[NSData alloc] initWithBytes:pkt.data length:pkt.length];
+                        
+                        CMSampleBufferRef ref = [decoder createCMSampleBufferFromData:data andDesc:cfg.formatDesc];
+                        [self.decoder decode:ref];
+                        //CFRelease(ref);
+                    }
+                        break;
+                    case NALACTIONExtraVPS:
+                    {
+                        if (vps) {
+                            vps = nil;
+                        }
+                        updateExtraDataFlag |= 1<<2;
+                        NSData * data = [[NSData alloc] initWithBytes:(pkt.data+4) length:pkt.length-4];
+                        vps = data;
+                    }
+                        break;
+                    case NALACTIONExtraSPS:
+                    {
+                        if (sps) {
+                            sps = nil;
+                        }
+                        updateExtraDataFlag |= 1<<1;
+                        NSData * data = [[NSData alloc] initWithBytes:(pkt.data+4) length:pkt.length-4];
+                        sps = data;
+                    }
+                        break;
+                    case NALACTIONExtraPPS:
+                    {
+                        if (pps) {
+                            pps = nil;
+                        }
+                        updateExtraDataFlag |= 1<<0;
+                        NSData * data = [[NSData alloc] initWithBytes:(pkt.data+4) length:pkt.length-4];
+                        pps = data;
+                    }
+                        break;
+                    case NALACTIONNormal:
+                    {
+                        uint32_t nalSize = (uint32_t)(pkt.length - 4);
+                        uint8_t *pNalSize = (uint8_t*)(&nalSize);
+                        pkt.data[0] = *(pNalSize + 3);
+                        pkt.data[1] = *(pNalSize + 2);
+                        pkt.data[2] = *(pNalSize + 1);
+                        pkt.data[3] = *(pNalSize);
+                        NSData * data = [[NSData alloc] initWithBytes:pkt.data length:pkt.length];
+                        CMSampleBufferRef ref = [decoder createCMSampleBufferFromData:data andDesc:cfg.formatDesc];
+                        usleep(40*1000);
+                        [self.decoder decode:ref];
+                    }
+                        break;
+                    default:
+                        break;
+                }
+                
+                if ((updateExtraDataFlag & mask) == mask) {
                     if (cfg.formatDesc) {
                         CFRelease(cfg.formatDesc);
                     }
                     
-                    cfg.formatDesc = [decoder createCMFormatDescFromVPS:vps andSPS:sps andPPS:pps];
-                    updateExtraDataFlag = 0;
-                }
-            }
-            else {
-                if ((updateExtraDataFlag & 0x03) == 0x03) {
-                    if (cfg.formatDesc) {
-                        CFRelease(cfg.formatDesc);
+                    if (standard == DWVideoStandardHEVC) {
+                        cfg.formatDesc = [decoder createCMFormatDescFromVPS:vps andSPS:sps andPPS:pps];
                     }
-                    
-                    cfg.formatDesc =  [decoder createCMFormatDescFromSPS:sps andPPS:pps];
+                    else {
+                        cfg.formatDesc = [decoder createCMFormatDescFromSPS:sps andPPS:pps];
+                    }
                     updateExtraDataFlag = 0;
                 }
+                
+                pkt = nil;
             }
             
-            pkt = nil;
-        }
-        
+            
+        } );
+    }
+    else {
+        [self.decoder setDelegate:nil];
         [self.decoder destroy];
         self.curStatus = VCAppStatusNone;
-    } );
+        [self.decoLayer removeFromSuperlayer];
+    }
 }
 
 
@@ -388,10 +460,18 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
     self.timer = nil;
 }
 
+#pragma mark - encode delegate
 - (void)gotSampleBuffer:(CMSampleBufferRef)sampleBuffer {
     if (self.encoder) {
         [self.encoder encode:sampleBuffer];
     }
+}
+
+#pragma mark - decode delegate
+
+- (void)gotDecodedData:(CVPixelBufferRef)samplebuffer
+{
+    [self.decoLayer setPixelBuffer:samplebuffer];
 }
 
 @end
