@@ -161,6 +161,7 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         
         if (err == noErr) {
             NSLog(@"get encodr %@ specification.", encoderID);
+            CFRelease(specification);
             CFRelease(encoderID);
             CFRelease(properties);
         }
