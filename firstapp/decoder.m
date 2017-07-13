@@ -56,8 +56,6 @@
     }
     
     if (status == noErr){
-        [naluData getBytes:h264Data length:h264DataSize];
-        
         status  = CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault,
                                                      (void*)h264Data, h264DataSize,
                                                      kCFAllocatorNull,
