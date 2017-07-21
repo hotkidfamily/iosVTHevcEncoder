@@ -11,24 +11,23 @@
 @implementation OutputStream
 
 - (void)open:(NSString*)fileName {
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *tempDir = NSTemporaryDirectory();
     
-    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
-    [fileManager removeItemAtPath:filePath error:nil];
-    [fileManager createFileAtPath:filePath contents:nil attributes:nil];
+    NSString *filePath = [tempDir stringByAppendingPathComponent:fileName];
     
-    self.fileHandle = [NSFileHandle fileHandleForWritingAtPath:filePath];
+    self.fileHandle = [[NSOutputStream alloc] initToFileAtPath:filePath append:NO];
+    [self.fileHandle open];
 }
 
 - (void)close {
-    [self.fileHandle closeFile];
+    [self.fileHandle close];
 }
 
 - (void)writeData:(NSData *)data {
-    [self.fileHandle seekToEndOfFile];
-    [self.fileHandle writeData:data];
+    NSInteger ret = [self.fileHandle write:data.bytes maxLength:data.length];
+    if (ret <= 0){
+        NSLog(@"write data error.");
+    }
 }
 
 

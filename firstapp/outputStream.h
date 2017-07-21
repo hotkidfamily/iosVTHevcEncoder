@@ -11,8 +11,7 @@
 
 
 @interface OutputStream : NSObject <EncoderDataDelegate>
-
-@property(nonatomic) NSFileHandle *fileHandle;
+@property NSOutputStream *fileHandle;
 
 - (void)open:(NSString*)fileName;
 - (void)close;

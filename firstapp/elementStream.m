@@ -59,9 +59,8 @@
     buffer = malloc(bufferCap);
     self.fileName = fileName;
     
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDir = [paths objectAtIndex: 0];
-    NSString *filePath = [documentsDir stringByAppendingPathComponent:fileName];
+    NSString *tempDir = NSTemporaryDirectory();
+    NSString *filePath = [tempDir stringByAppendingPathComponent:fileName];
     
     self.streamReader = [NSInputStream inputStreamWithFileAtPath:filePath];
     [self.streamReader open];
