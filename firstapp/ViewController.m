@@ -286,11 +286,12 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
 
 - (IBAction)pressPlayButton:(id)sender {
     
-    if (self.curStatus != VCAppStatusNone){
+    if (self.curStatus != VCAppStatusNone
+        && self.curStatus != VCAppStatusPlay){
         return ;
     }
     
-    if (!self.decoder) {
+    if (self.curStatus != VCAppStatusPlay) {
         self.decoLayer = [[AAPLEAGLLayer alloc] initWithFrame:CGRectMake(0, 0, 544, 960)] ;
         [self.view.layer insertSublayer:self.decoLayer below:self.encodeButton.layer];
         self.curStatus = VCAppStatusPlay;
@@ -417,14 +418,15 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
                 pkt = nil;
                 usleep(40*1000);
             }
+            NSLog(@"encode end.");
         } );
     }
     else {
         [self.decoder setDelegate:nil];
         [self.decoder destroy];
-        self.curStatus = VCAppStatusNone;
         [self.decoLayer removeFromSuperlayer];
         [self.playButton setTitle:@"播放" forState:UIControlStateNormal];
+        self.curStatus = VCAppStatusNone;
     }
 }
 
