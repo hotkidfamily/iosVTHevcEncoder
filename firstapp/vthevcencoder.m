@@ -153,17 +153,20 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     dispatch_async(self.sessionQueue, ^{
         
         CFDictionaryRef specification = nil;
-        CFStringRef encoderID;
-        CFDictionaryRef properties;
+        CFStringRef encoderID = nil;
+        CFDictionaryRef properties = nil;
         OSStatus err = noErr;
         
         err = VTCopySupportedPropertyDictionaryForEncoder(1280, 720, kCMVideoCodecType_HEVC, specification, &encoderID, &properties);
         
         if (err == noErr) {
             NSLog(@"get encodr %@ specification.", encoderID);
-            CFRelease(specification);
-            CFRelease(encoderID);
-            CFRelease(properties);
+            if(specification)
+                CFRelease(specification);
+            if(encoderID)
+                CFRelease(encoderID);
+            if(properties)
+                CFRelease(properties);
         }
 #if 0
         CFMutableDictionaryRef encoderSpecifications = nil;
