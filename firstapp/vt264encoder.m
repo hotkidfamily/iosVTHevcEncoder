@@ -205,6 +205,30 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
             err = VTSessionSetProperty(session, kVTCompressionPropertyKey_ProfileLevel, profileLevel);
         }
         
+        if (err == noErr) {
+            CFStringRef ref = kCVImageBufferColorPrimaries_ITU_R_709_2;
+            VTSessionSetProperty(session,
+                                 kVTCompressionPropertyKey_ColorPrimaries,
+                                 ref);
+            CFRelease(ref);
+        }
+        
+        if (err == noErr) {
+            CFStringRef ref = kCVImageBufferTransferFunction_ITU_R_709_2;
+            VTSessionSetProperty(session,
+                                 kVTCompressionPropertyKey_TransferFunction,
+                                 ref);
+            CFRelease(ref);
+        }
+        
+        if (err == noErr) {
+            CFStringRef ref = kCVImageBufferYCbCrMatrix_ITU_R_601_4;
+            VTSessionSetProperty(session,
+                                 kVTCompressionPropertyKey_YCbCrMatrix,
+                                 ref);
+            CFRelease(ref);
+        }
+        
         if(err == noErr) {
             VTSessionSetProperty(session, kVTCompressionPropertyKey_H264EntropyMode, kVTH264EntropyMode_CABAC);
         }

@@ -246,14 +246,14 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
             err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_AverageBitRate, ref);
             CFRelease(ref);
         }
-        
+        #if 0
         if (err == noErr) {
             const float v = 0.5;
             CFNumberRef ref = CFNumberCreate(NULL, kCFNumberFloatType, &v);
             err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_Quality, ref);
             CFRelease(ref);
         }
-        #if 0
+        
         if(err == noErr) {
             int v = params.bitrate >> 3;
             CFNumberRef bytes = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &v);
@@ -280,6 +280,30 @@ void didCompressH265(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
         if(err == noErr) {
             CFStringRef ref = kVTProfileLevel_HEVC_Main_AutoLevel;
             err = VTSessionSetProperty(hevcsession, kVTCompressionPropertyKey_ProfileLevel, ref);
+            CFRelease(ref);
+        }
+        
+        if (err == noErr) {
+            CFStringRef ref = kCVImageBufferColorPrimaries_ITU_R_709_2;
+            VTSessionSetProperty(hevcsession,
+                                 kVTCompressionPropertyKey_ColorPrimaries,
+                                 ref);
+            CFRelease(ref);
+        }
+        
+        if (err == noErr) {
+            CFStringRef ref = kCVImageBufferTransferFunction_ITU_R_709_2;
+            VTSessionSetProperty(hevcsession,
+                                 kVTCompressionPropertyKey_TransferFunction,
+                                 ref);
+            CFRelease(ref);
+        }
+        
+        if (err == noErr) {
+            CFStringRef ref = kCVImageBufferYCbCrMatrix_ITU_R_601_4;
+            VTSessionSetProperty(hevcsession,
+                                 kVTCompressionPropertyKey_YCbCrMatrix,
+                                 ref);
             CFRelease(ref);
         }
         
