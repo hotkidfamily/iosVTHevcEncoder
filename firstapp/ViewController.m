@@ -255,16 +255,13 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
         case 0x22:
             action = NALACTIONExtraPPS;
             break;
-        case 0x07:
-            action = NALACTIONNormal;
-            break;
         case 0x13: // NAL_UNIT_CODED_SLICE_IDR
         case 0x14: // NAL_UNIT_CODED_SLICE_IDR_N_LP
             action = NALACTIONKey;
             break;
         case 0x27:
         default:
-            action = NALACTIONSkip;
+            action = NALACTIONNormal;
             break;
     }
     
@@ -297,6 +294,7 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
         self.decoLayer = [[AAPLEAGLLayer alloc] initWithFrame:CGRectMake(0, 0, 544, 960)] ;
         [self.view.layer insertSublayer:self.decoLayer below:self.encodeButton.layer];
         self.curStatus = VCAppStatusPlay;
+        [self.playButton setTitle:@"停止" forState:UIControlStateNormal];
         
         dispatch_async( decodeQueue, ^{
             DWVideoStandard standard = self.hevcEnabled?DWVideoStandardHEVC:DWVideoStandardH264;
@@ -395,7 +393,6 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
                         pkt.data[3] = *(pNalSize);
                         NSData * data = [[NSData alloc] initWithBytes:pkt.data length:pkt.length];
                         CMSampleBufferRef ref = [decoder createCMSampleBufferFromData:data andDesc:cfg.formatDesc];
-                        usleep(40*1000);
                         [self.decoder decode:ref];
                     }
                         break;
@@ -418,9 +415,8 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
                 }
                 
                 pkt = nil;
+                usleep(40*1000);
             }
-            
-            
         } );
     }
     else {
@@ -428,6 +424,7 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
         [self.decoder destroy];
         self.curStatus = VCAppStatusNone;
         [self.decoLayer removeFromSuperlayer];
+        [self.playButton setTitle:@"播放" forState:UIControlStateNormal];
     }
 }
 
