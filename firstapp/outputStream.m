@@ -27,7 +27,7 @@
     NSInteger ret = [self.fileHandle write:data.bytes maxLength:data.length];
     if (ret <= 0){
         NSLog(@"write data error.");
-    }
+    } 
 }
 
 
