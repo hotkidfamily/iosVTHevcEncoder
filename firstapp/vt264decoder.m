@@ -121,6 +121,7 @@ void didDecompressH264( void * CM_NULLABLE decompressionOutputRefCon,
 -(BOOL)destroy
 {
     if (session){
+        VTDecompressionSessionWaitForAsynchronousFrames(session);
         VTDecompressionSessionInvalidate(session);
         CFRelease(session);
         session = nil;
