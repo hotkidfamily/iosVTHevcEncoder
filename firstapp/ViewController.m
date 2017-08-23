@@ -48,6 +48,7 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
 @property (weak, nonatomic) IBOutlet UITextView *encoderListText;
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
 @property (weak, nonatomic) IBOutlet UISwitch *hevcSwitch;
+@property (weak, nonatomic) IBOutlet UISlider *fpsSlider;
 
 - (IBAction)pressOpenButton:(id)sender;
 - (IBAction)pressSwitchButton:(id)sender;
@@ -56,6 +57,7 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
 - (IBAction)removeFromSettingButton:(id)sender;
 - (IBAction)pressPlayButton:(id)sender;
 - (IBAction)onHevcSwitchValueChange:(id)sender;
+- (IBAction)changefps:(id)sender;
 
 @property(nonatomic) BOOL hevcEnabled;
 @property(nonatomic) AVCaptureVideoPreviewLayer *previewlayer;
@@ -81,6 +83,7 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
     self.curStatus = VCAppStatusNone;
     self.hevcEnabled = [self.hevcSwitch isOn];
     self.recordingLabel.hidden = YES;
+    [self configUI];
     decodeQueue = dispatch_queue_create("com.yanli.test.gcd.queue", DISPATCH_QUEUE_SERIAL);
 }
 
@@ -105,6 +108,13 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
     self.previewlayer = nil;
     self.mainView.layer.backgroundColor = [UIColor whiteColor].CGColor;
      
+}
+
+- (void)configUI {
+    _fpsSlider.minimumValue = 0.0;
+    _fpsSlider.maximumValue = 1.0;
+    _fpsSlider.value = 0.75;
+    _fpsSlider.continuous = NO;
 }
 
 - (IBAction)pressOpenButton:(id)sender {
@@ -144,7 +154,7 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
 - (IBAction)pressSwitchButton:(id)sender {
     if (self.capture) {
         CAPTURECFG cfg;
-        cfg.fps = 25.0;
+        cfg.fps = _fpsSlider.value*25.0;
         cfg.switchCamera = YES;
         [self.capture reconfig:cfg];
     }
@@ -440,7 +450,21 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
 }
 
 
-#pragma mark recording...
+#pragma mark FPS Slider
+
+- (IBAction)changefps:(id)sender {
+    UISlider *slider = (UISlider*)sender;
+    
+    CAPTURECFG cfg;
+    cfg.fps = slider.value * 25.0;
+    
+    NSLog(@"fps = %f", cfg.fps);
+    //cfg.switchCamera = YES;
+    [self.capture reconfig:cfg];
+}
+
+
+#pragma mark Recording Status
 - (void)flushRecordingLabel {
     uint32_t duration = 0;
     if (self.encoder){
@@ -460,11 +484,13 @@ typedef NS_ENUM(NSUInteger, VCAppStatus) {
 }
 
 #pragma mark - encode delegate
+
 - (void)gotSampleBuffer:(CMSampleBufferRef)sampleBuffer {
     if (self.encoder) {
         [self.encoder encode:sampleBuffer];
     }
 }
+
 
 #pragma mark - decode delegate
 

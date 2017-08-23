@@ -123,7 +123,11 @@ static void * FocusModeContext = &FocusModeContext;
         }
         
         CMTime frameDuration = CMTimeMake(1, (uint32_t)cfg.fps);
+        NSLog(@"device fps(%f ~ %f), current %f", 1/CMTimeGetSeconds(self.device.activeVideoMaxFrameDuration), 1/CMTimeGetSeconds(self.device.activeVideoMinFrameDuration),
+              1/CMTimeGetSeconds(frameDuration));
         [self.device setActiveVideoMaxFrameDuration:frameDuration];
+        [self.device setActiveVideoMinFrameDuration:frameDuration];
+        
         
         [self.session commitConfiguration];
     } );
